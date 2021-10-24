@@ -24,3 +24,6 @@ yarn lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+Thanks to [@jamieohanlon](https://github.com/jamieohanlon/Bootstrap-Form-Builder) for the perspective.

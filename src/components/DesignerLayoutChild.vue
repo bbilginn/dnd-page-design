@@ -9,7 +9,7 @@
       handle=".handle"
       ghost-class="ghost"
       v-bind="{
-        group: 'elements',
+        group: 'designItems',
         disabled: false,
         animation: 300,
       }"
@@ -19,9 +19,14 @@
       <template #item="{ element, index }">
         <div
           :key="element.id"
-          :class="[element.column ? `col-${element.columnSize}` : 'col-12']"
+          :class="element.type === 'column' ? `${element.className}` : 'col-12'"
         >
-          <DesignItem :element="element" :index="index" :items="items" />
+          <DesignItem
+            :element="element"
+            :index="index"
+            :customFields="customFields"
+            :items="items"
+          />
         </div>
       </template>
     </draggable>
@@ -33,7 +38,7 @@ import draggable from "vuedraggable";
 import DesignItem from "./DesignItem.vue";
 
 export default {
-  props: ["parent", "items"],
+  props: ["parent", "customFields", "items"],
   name: "DesignerLayoutChild",
   components: {
     draggable,
@@ -45,8 +50,17 @@ export default {
   methods: {
     onAdd: function () {
       this.$emit("childAdded");
+      // console.log("emit");
     },
     checkMove(e) {
+      // if (
+      //   e.draggedContext.element.type === "customField" &&
+      //   this.parent.type !== "column"
+      // ) {
+      //   return false;
+      // }
+
+      console.log(this.parent.type);
       console.log(e);
       return true;
     },

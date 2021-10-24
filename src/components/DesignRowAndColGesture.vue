@@ -2,16 +2,13 @@
   <div class="dropdown">
     <button
       class="btn btn-sm dropdown-toggle"
-      :class="{ textColor, 'text-dark': item.type === 'container' }"
+      :class="textColor"
       type="button"
       id="dropdownMenuButton1"
       data-bs-toggle="dropdown"
       aria-expanded="false"
     >
-      <fa
-        icon="border-all"
-        :class="{ textColor, 'text-dark': item.type === 'container' }"
-      />
+      <fa icon="border-all" />
     </button>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
       <li>
@@ -51,6 +48,7 @@ export default {
   name: "DesignRowAndColGesture",
   data() {
     return {
+      editItem: null,
       tableMatrix: [],
       selecteds: [],
       numberOfRow: 0,
@@ -99,18 +97,18 @@ export default {
               id: uuidv4(),
               type: "column",
               name: "Column",
-              color: "light",
-              columnSize: Math.round(12 / x.cell.length),
+              columnSize: 0,
+              classType: "col", // just type, eg: col, col-xl, col-md, etc.
+              className: "col", // with or without size, eg: col-6, col-sm-12, etc.
               container: true,
               items: [],
               hasTableGenerator: true,
-              column: true,
             };
           }),
         };
       });
-      // eslint-disable-next-line vue/no-mutating-props
-      this.item.items = items;
+      // console.log(items);
+      this.editItem.items = items;
     },
     range: function (start, end) {
       return Array(end - start + 1)
@@ -119,6 +117,7 @@ export default {
     },
   },
   created: function () {
+    this.editItem = this.item;
     for (let index = 1; index <= 12; index++) {
       let x = index * 12;
       this.tableMatrix.push(this.range(x - 11, x));
@@ -126,7 +125,7 @@ export default {
   },
   computed: {
     textColor() {
-      return panelTextColor.get(this.item.color);
+      return panelTextColor.get(this.item);
     },
   },
 };

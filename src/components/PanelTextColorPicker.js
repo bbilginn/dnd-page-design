@@ -1,6 +1,9 @@
 export default {
-    get: function (color) {
-        return ["light", "info", "warning"].includes(color)
+    get: function (element) {
+        if (element.color === undefined) {
+            return "text-dark";
+        }
+        return ["light", "info", "warning"].includes(element.color)
             ? "text-dark"
             : "text-white";
     }

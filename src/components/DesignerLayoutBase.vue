@@ -17,12 +17,12 @@
           </button>
           <button
             class="nav-link"
-            id="nav-fields-tab"
+            id="nav-custom-fields-tab"
             data-bs-toggle="tab"
-            data-bs-target="#nav-fields"
+            data-bs-target="#nav-custom-fields"
             type="button"
             role="tab"
-            aria-controls="nav-fields"
+            aria-controls="nav-custom-fields"
             aria-selected="false"
           >
             Fields
@@ -37,11 +37,11 @@
           aria-labelledby="nav-designer-items-tab"
         >
           <draggable
-            :list="elements"
+            :list="designItems"
             item-key="id"
             ghost-class="ghost"
             v-bind="{
-              group: { name: 'elements', pull: 'clone', put: 'false' },
+              group: { name: 'designItems', pull: 'clone', put: 'false' },
               sort: false,
               disabled: false,
               animation: 300,
@@ -58,32 +58,53 @@
         </div>
         <div
           class="tab-pane fade"
-          id="nav-fields"
+          id="nav-custom-fields"
           role="tabpanel"
-          aria-labelledby="nav-fields-tab"
+          aria-labelledby="nav-custom-fields-tab"
         >
-          ...
+          <draggable
+            :list="customFields"
+            item-key="id"
+            ghost-class="ghost"
+            v-bind="{
+              group: { name: 'designItems', pull: true, put: 'false' },
+              sort: false,
+              disabled: false,
+              animation: 300,
+            }"
+            :clone="onClone"
+            class="btn-group-vertical col-12 gap-2"
+          >
+            <template #item="{ element }">
+              <button type="button" class="btn btn-outline-secondary">
+                {{ element.name }}
+              </button>
+            </template>
+          </draggable>
         </div>
       </div>
     </aside>
     <main>
       <draggable
-        :list="inUsedElements"
+        :list="designedItems"
         class="inUsedArea"
         item-key="id"
+        @add="onAdd"
         handle=".handle"
         ghost-class="ghost"
         v-bind="{
-          group: 'elements',
+          group: 'designItems',
           disabled: false,
           animation: 300,
         }"
+        :move="checkMove"
       >
         <template #item="{ element, index }">
           <DesignItem
             :element="element"
             :index="index"
-            :items="inUsedElements"
+            :customFields="customFields"
+            :items="designedItems"
           ></DesignItem>
         </template>
       </draggable>
@@ -104,20 +125,18 @@ export default {
   },
   data() {
     return {
-      elements: [
+      designItems: [
         {
           type: "container",
           name: "Container",
-          class: "container",
           container: true,
           items: [],
           hasTableGenerator: true,
-          containerSize: "container-fluid",
+          className: "container-fluid",
         },
         {
           type: "row",
           name: "Row",
-          class: "row",
           container: true,
           row: true,
           items: [],
@@ -126,11 +145,12 @@ export default {
         {
           type: "column",
           name: "Column",
-          columnSize: 6,
+          columnSize: 0,
+          classType: "col", // just type, eg: col, col-xl, col-md, etc.
+          className: "col", // with or without size, eg: col-6, col-sm-12, etc.
           container: true,
-          column: true,
           items: [],
-          color: "light",
+          hasTableGenerator: true,
         },
         {
           type: "panel",
@@ -141,12 +161,31 @@ export default {
           container: true,
           items: [],
           hasTableGenerator: true,
-          column: true,
         },
         { type: "tab", name: "Tab", container: true, items: [] },
         { type: "tabItem", name: "TabItem", container: true, items: [] },
       ],
-      inUsedElements: [
+      customFields: [
+        {
+          type: "customField",
+          customFieldType: "text",
+          name: "Name",
+          id: uuidv4(),
+        },
+        {
+          type: "customField",
+          customFieldType: "number",
+          name: "Age",
+          id: uuidv4(),
+        },
+        {
+          type: "customField",
+          customFieldType: "select",
+          name: "Sex",
+          id: uuidv4(),
+        },
+      ],
+      designedItems: [
         {
           type: "container",
           name: "Container",
@@ -154,14 +193,13 @@ export default {
           items: [],
           id: uuidv4(),
           hasTableGenerator: true,
-          containerSize: "container-fluid",
+          className: "container-fluid",
         },
       ],
-      liveHtml: "",
     };
   },
   watch: {
-    inUsedElements: {
+    designedItems: {
       handler(includedItems) {
         let index = includedItems.indexOf(
           includedItems.find((x) => x.type !== "container")
@@ -176,75 +214,16 @@ export default {
   },
   methods: {
     onClone: function (el) {
-      if (el.type == "container") {
-        return {
-          type: el.type,
-          name: el.name,
-          id: uuidv4(),
-          container: true,
-          items: [],
-          hasTableGenerator: true,
-          containerSize: "container-fluid",
-        };
-      } else if (el.type == "column") {
-        return {
-          type: el.type,
-          columnSize: el.columnSize,
-          name: el.name,
-          id: uuidv4(),
-          container: true,
-          column: true,
-          items: [],
-          color: "light",
-        };
-      } else if (el.type == "row") {
-        return {
-          type: el.type,
-          name: el.name,
-          id: uuidv4(),
-          container: true,
-          row: true,
-          items: [],
-          hasTableGenerator: true,
-        };
-      } else if (el.type == "button") {
-        return {
-          type: el.type,
-          name: el.name,
-          id: uuidv4(),
-          buttonText: "Submit",
-          buttonType: "primary",
-        };
-      } else if (el.type == "panel") {
-        return {
-          id: uuidv4(),
-          type: el.type,
-          name: el.name,
-          title: "Title-0",
-          color: "light",
-          columnSize: 12,
-          container: true,
-          items: [],
-          hasTableGenerator: true,
-          column: true,
-        };
-      } else if (el.type == "tab") {
-        return {
-          type: el.type,
-          name: el.name,
-          id: uuidv4(),
-          container: true,
-          items: [],
-        };
-      } else if (el.type == "tabItem") {
-        return {
-          type: el.type,
-          name: el.name,
-          id: uuidv4(),
-          container: true,
-          items: [],
-        };
-      }
+      let clonedElement = { ...el };
+      clonedElement.id = uuidv4();
+      return clonedElement;
+    },
+    onAdd: function () {
+      // console.log(el.target.className);
+    },
+    checkMove(e) {
+      console.log(e);
+      return e.to.className !== "inUsedArea";
     },
   },
 };
@@ -255,7 +234,7 @@ html {
   scroll-behavior: smooth;
 }
 
-.row > [class^="col-"] {
+.row > [class^="col"] {
   /* padding-top: 0.75rem;
   padding-bottom: 0.75rem; */
   background-color: rgba(166, 166, 166, 0.05);
@@ -284,7 +263,7 @@ html {
 
 aside {
   padding: 1rem 0rem;
-  width: 15%;
+  width: 16%;
   background: white;
   height: 100vh;
   box-shadow: 1px 0 20px rgba(0, 0, 0, 0.1);
@@ -297,12 +276,12 @@ aside .tab-pane {
 }
 
 main {
-  flex-basis: 85%;
+  flex-basis: 84%;
   position: relative;
   margin-left: auto;
 }
 
 .offcanvas-start {
-  width: 15% !important;
+  width: 16% !important;
 }
 </style>

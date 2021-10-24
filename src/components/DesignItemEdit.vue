@@ -1,14 +1,13 @@
 <template>
-  <div>
+  <div class="text-dark">
     <div
       @click="addFlexPosition"
       class="pointer"
-      :class="{ textColor, 'text-dark': item.type === 'container' }"
       data-bs-toggle="offcanvas"
       :data-bs-target="`#offcanvas-${editItem.id}`"
       :aria-controls="`offcanvas-${editItem.id}`"
     >
-      <fa icon="edit" />
+      <fa icon="edit" :class="textColor" />
     </div>
 
     <div
@@ -50,140 +49,62 @@
             type="range"
             class="form-range"
             :id="`colRange-${editItem.id}`"
-            min="1"
+            min="0"
             max="12"
             v-model="editItem.columnSize"
+            :aria-describedby="`range-help-${editItem.id}`"
           />
+          <div :id="`range-help-${editItem.id}`" class="form-text">
+            If you set it to "0" it will be free across the other columns.
+            <br />
+            <a
+              href="https://getbootstrap.com/docs/5.1/layout/grid/"
+              target="_blank"
+              >See the document</a
+            >
+          </div>
         </div>
-        <div class="mb-3" v-if="editItem.type === 'panel'">
+        <div class="mb-3" v-if="editItem.color !== undefined">
           <label :for="`header-color-${editItem.id}`" class="form-label"
             >Header Color</label
           >
           <br />
+
           <div
             :id="`header-color-${editItem.id}`"
             class="btn-group-vertical col-12 gap-2"
+            :aria-describedby="`container-help-${editItem.id}`"
           >
-            <input
-              type="radio"
-              class="btn-check"
-              :name="`header-color-${editItem.id}`"
-              :id="`primary-outlined-${editItem.id}`"
-              autocomplete="off"
-              value="primary"
-              v-model="editItem.color"
-              :checked="editItem.color === 'primary'"
-            />
-            <label
-              class="btn btn-outline-primary"
-              :for="`primary-outlined-${editItem.id}`"
-              >bg-primary</label
+            <div
+              class="btn-group-vertical col-12 gap-2"
+              v-for="(colorClass, index) in colors"
+              :key="index"
             >
-            <input
-              type="radio"
-              class="btn-check"
-              :name="`header-color-${editItem.id}`"
-              :id="`secondary-outlined-${editItem.id}`"
-              autocomplete="off"
-              value="secondary"
-              v-model="editItem.color"
-              :checked="editItem.color === 'secondary'"
-            />
-            <label
-              class="btn btn-outline-secondary"
-              :for="`secondary-outlined-${editItem.id}`"
-              >bg-secondary</label
-            >
-            <input
-              type="radio"
-              class="btn-check"
-              :name="`header-color-${editItem.id}`"
-              :id="`success-outlined-${editItem.id}`"
-              autocomplete="off"
-              value="success"
-              v-model="editItem.color"
-              :checked="editItem.color === 'success'"
-            />
-            <label
-              class="btn btn-outline-success"
-              :for="`success-outlined-${editItem.id}`"
-              >bg-success</label
-            >
-            <input
-              type="radio"
-              class="btn-check"
-              :name="`header-color-${editItem.id}`"
-              :id="`danger-outlined-${editItem.id}`"
-              autocomplete="off"
-              value="danger"
-              v-model="editItem.color"
-              :checked="editItem.color === 'danger'"
-            />
-            <label
-              class="btn btn-outline-danger"
-              :for="`danger-outlined-${editItem.id}`"
-              >bg-danger</label
-            >
-            <input
-              type="radio"
-              class="btn-check"
-              :name="`header-color-${editItem.id}`"
-              :id="`warning-outlined-${editItem.id}`"
-              autocomplete="off"
-              value="warning"
-              v-model="editItem.color"
-              :checked="editItem.color === 'warning'"
-            />
-            <label
-              class="btn btn-outline-warning"
-              :for="`warning-outlined-${editItem.id}`"
-              >bg-warning</label
-            >
-            <input
-              type="radio"
-              class="btn-check"
-              :name="`header-color-${editItem.id}`"
-              :id="`info-outlined-${editItem.id}`"
-              autocomplete="off"
-              value="info"
-              v-model="editItem.color"
-              :checked="editItem.color === 'info'"
-            />
-            <label
-              class="btn btn-outline-info"
-              :for="`info-outlined-${editItem.id}`"
-              >bg-info</label
-            >
-            <input
-              type="radio"
-              class="btn-check"
-              :name="`header-color-${editItem.id}`"
-              :id="`light-outlined-${editItem.id}`"
-              autocomplete="off"
-              value="light"
-              v-model="editItem.color"
-              :checked="editItem.color === 'light'"
-            />
-            <label
-              class="btn btn-outline-light text-dark"
-              style="border: 1px solid #d5d5d5"
-              :for="`light-outlined-${editItem.id}`"
-              >bg-light</label
-            >
-            <input
-              type="radio"
-              class="btn-check"
-              :name="`header-color-${editItem.id}`"
-              :id="`dark-outlined-${editItem.id}`"
-              autocomplete="off"
-              value="dark"
-              v-model="editItem.color"
-              :checked="editItem.color === 'dark'"
-            />
-            <label
-              class="btn btn-outline-dark"
-              :for="`dark-outlined-${editItem.id}`"
-              >bg-dark</label
+              <input
+                type="radio"
+                class="btn-check"
+                :name="`header-color-${editItem.id}`"
+                :id="`${colorClass}-outlined-${editItem.id}`"
+                autocomplete="off"
+                :value="colorClass"
+                v-model="editItem.color"
+                :checked="editItem.color === colorClass"
+              />
+              <label
+                :class="`btn btn-outline-${colorClass}`"
+                :style="colorClass === 'light' ? 'border: 1px solid black' : ''"
+                :for="`${colorClass}-outlined-${editItem.id}`"
+                >bg-{{ colorClass }}</label
+              >
+            </div>
+          </div>
+          <div :id="`header-color-${editItem.id}`" class="form-text">
+            Set your color of the item.
+            <br />
+            <a
+              href="https://getbootstrap.com/docs/5.1/customize/color/#theme-colors"
+              target="_blank"
+              >See the document</a
             >
           </div>
         </div>
@@ -195,96 +116,85 @@
           <div
             :id="`container-size-${editItem.id}`"
             class="btn-group-vertical col-12 gap-2"
+            :aria-describedby="`container-help-${editItem.id}`"
           >
-            <input
-              type="radio"
-              class="btn-check"
-              :name="`container-size-${editItem.id}`"
-              :id="`container-fluid-outlined-${editItem.id}`"
-              autocomplete="off"
-              value="container-fluid"
-              v-model="editItem.containerSize"
-              :checked="editItem.containerSize === 'container-fluid'"
-            />
-            <label
-              class="btn btn-outline-secondary"
-              :for="`container-fluid-outlined-${editItem.id}`"
-              >container-fluid</label
+            <div
+              class="btn-group-vertical col-12 gap-2"
+              v-for="(containerClassName, index) in containerClassTypes"
+              :key="index"
             >
-            <input
-              type="radio"
-              class="btn-check"
-              :name="`container-size-${editItem.id}`"
-              :id="`container-sm-outlined-${editItem.id}`"
-              autocomplete="off"
-              value="container-sm"
-              v-model="editItem.containerSize"
-              :checked="editItem.containerSize === 'container-sm'"
-            />
-            <label
-              class="btn btn-outline-secondary"
-              :for="`container-sm-outlined-${editItem.id}`"
-              >container-sm</label
+              <input
+                type="radio"
+                class="btn-check"
+                :name="`container-size-${editItem.id}`"
+                :id="`${containerClassName}-outlined-${editItem.id}`"
+                autocomplete="off"
+                :value="containerClassName"
+                v-model="editItem.className"
+                :checked="editItem.className === containerClassName"
+              />
+              <label
+                class="btn btn-outline-secondary"
+                :for="`${containerClassName}-outlined-${editItem.id}`"
+                >{{ containerClassName }}</label
+              >
+            </div>
+          </div>
+          <div :id="`container-help-${editItem.id}`" class="form-text">
+            Set your viewport of container.
+            <br />
+            <a
+              href="https://getbootstrap.com/docs/5.1/layout/containers/"
+              target="_blank"
+              >See the document</a
             >
-            <input
-              type="radio"
-              class="btn-check"
-              :name="`container-size-${editItem.id}`"
-              :id="`container-md-outlined-${editItem.id}`"
-              autocomplete="off"
-              value="container-md"
-              v-model="editItem.containerSize"
-              :checked="editItem.containerSize === 'container-md'"
-            />
-            <label
-              class="btn btn-outline-secondary"
-              :for="`container-md-outlined-${editItem.id}`"
-              >container-md</label
+          </div>
+        </div>
+        <div class="mb-3" v-if="editItem.type === 'column'">
+          <label :for="`column-size-${editItem.id}`" class="form-label"
+            >Size</label
+          >
+          <br />
+          <div
+            :id="`column-size-${editItem.id}`"
+            class="btn-group-vertical col-12 gap-2"
+            :aria-describedby="`column-help-${editItem.id}`"
+          >
+            <div
+              class="btn-group-vertical col-12 gap-2"
+              v-for="(columnClassName, index) in columnClassTypes"
+              :key="index"
             >
-            <input
-              type="radio"
-              class="btn-check"
-              :name="`container-size-${editItem.id}`"
-              :id="`container-lg-outlined-${editItem.id}`"
-              autocomplete="off"
-              value="container-lg"
-              v-model="editItem.containerSize"
-              :checked="editItem.containerSize === 'container-lg'"
-            />
-            <label
-              class="btn btn-outline-secondary"
-              :for="`container-lg-outlined-${editItem.id}`"
-              >container-lg</label
+              <input
+                type="radio"
+                class="btn-check"
+                :name="`column-size-${editItem.id}`"
+                :id="`${columnClassName}-outlined-${editItem.id}`"
+                autocomplete="off"
+                :value="columnClassName"
+                v-model="editItem.classType"
+                :checked="editItem.classType === columnClassName"
+              />
+              <label
+                class="btn btn-outline-secondary"
+                :for="`${columnClassName}-outlined-${editItem.id}`"
+                >{{ columnClassName }}</label
+              >
+            </div>
+          </div>
+          <div :id="`column-help-${editItem.id}`" class="form-text">
+            Set your viewport of columns.
+            <br />
+            <a
+              href="https://getbootstrap.com/docs/5.1/layout/grid/#how-it-works"
+              target="_blank"
+              >How it work</a
             >
-            <input
-              type="radio"
-              class="btn-check"
-              :name="`container-size-${editItem.id}`"
-              :id="`container-xl-outlined-${editItem.id}`"
-              autocomplete="off"
-              value="container-xl"
-              v-model="editItem.containerSize"
-              :checked="editItem.containerSize === 'container-xl'"
-            />
-            <label
-              class="btn btn-outline-secondary"
-              :for="`container-xl-outlined-${editItem.id}`"
-              >container-xl</label
-            >
-            <input
-              type="radio"
-              class="btn-check"
-              :name="`container-size-${editItem.id}`"
-              :id="`container-xxl-outlined-${editItem.id}`"
-              autocomplete="off"
-              value="container-xxl"
-              v-model="editItem.containerSize"
-              :checked="editItem.containerSize === 'container-xxl'"
-            />
-            <label
-              class="btn btn-outline-secondary"
-              :for="`container-xxl-outlined-${editItem.id}`"
-              >container-xxl</label
+            -
+            <a
+              href="https://getbootstrap.com/docs/5.1/layout/grid/#grid-options"
+              target="_blank"
+              >Grid options</a
             >
           </div>
         </div>
@@ -302,6 +212,34 @@ export default {
   data() {
     return {
       editItem: null,
+      containerClassTypes: [
+        "container",
+        "container-sm",
+        "container-md",
+        "container-lg",
+        "container-xl",
+        "container-xxl",
+        "container-fluid",
+      ],
+      columnClassTypes: [
+        "col",
+        "col-xs",
+        "col-sm",
+        "col-md",
+        "col-lg",
+        "col-xl",
+        "col-xxl",
+      ],
+      colors: [
+        "primary",
+        "secondary",
+        "success",
+        "danger",
+        "warning",
+        "info",
+        "light",
+        "dark",
+      ],
     };
   },
   created: function () {
@@ -313,6 +251,20 @@ export default {
       offCanvas.style.position = "absolute";
     });
   },
+  watch: {
+    editItem: {
+      handler(editedItem) {
+        if (editedItem?.columnSize !== undefined) {
+          if (editedItem.columnSize > 0) {
+            editedItem.className = `${editedItem.classType}-${editedItem.columnSize}`;
+          } else {
+            editedItem.className = editedItem.classType;
+          }
+        }
+      },
+      deep: true,
+    },
+  },
   methods: {
     addFlexPosition: function () {
       document.getElementById(`offcanvas-${this.editItem.id}`).style.position =
@@ -321,7 +273,7 @@ export default {
   },
   computed: {
     textColor() {
-      return panelTextColor.get(this.editItem.color);
+      return panelTextColor.get(this.editItem);
     },
   },
 };

@@ -12,19 +12,17 @@
     >
       <div class="d-flex justify-content-between align-items-center">
         <DesignItemEdit :item="element" v-if="noEdit" />
-        {{ element.title ?? element.name }}
+        <span :class="textColor">{{ element.title ?? element.name }}</span>
         <span
+          :class="textColor"
           style="font-size: 10px; position: absolute; top: 30px; left: 40px"
-          v-if="element.columnSize !== undefined"
+          v-if="element.columnSize !== undefined && element.columnSize > 1"
         >
-          (12/{{ element.columnSize }})
+          12/{{ element.columnSize }}
         </span>
       </div>
       <div class="btn-group btn-group-sm" role="group">
-        <DesignRowAndColGesture
-          :item="element"
-          v-if="element.hasTableGenerator && element.columnSize > 2"
-        />
+        <DesignRowAndColGesture :item="element" v-if="showRowAndColGesture" />
         <button
           @click="deleteItem"
           type="button"
@@ -44,30 +42,69 @@
     </div>
   </div>
 
-  <div v-else style="position:relative;" :class="element.containerSize">
+  <div v-else-if="element.type === 'customField'" class="customField relative">
+    <div class="d-flex justify-content-between align-items-center handle">
+      <div class="d-flex justify-content-between align-items-center">
+        <DesignItemEdit :item="element" v-if="noEdit" />
+        <span :class="textColor">{{ element.name }}</span>
+      </div>
+      <button
+        :class="textColor"
+        @click="deleteItem"
+        type="button"
+        class="btn btn-sm"
+      >
+        &#x2715;
+      </button>
+    </div>
+  </div>
+
+  <div
+    v-else
+    class="relative"
+    :class="[element.type === 'container' ? element.className : '']"
+  >
     <div
-      v-if="element.type == 'container' || element.items.length === 0"
+      v-if="showHeader"
       class="d-flex justify-content-between align-items-center handle"
     >
       <div class="d-flex justify-content-between align-items-center">
         <DesignItemEdit :item="element" v-if="noEdit" />
-        {{ element.title ?? element.name }}
-        <span style="font-size: 10px" v-if="element.columnSize !== undefined">
-          (12/{{ element.columnSize }})
+        <span :class="textColor">
+          {{ element.name }}
+          <span
+            style="font-size: 10px; margin-right: 2px"
+            v-if="element.columnSize !== undefined && element.columnSize > 1"
+          >
+            12/{{ element.columnSize }}
+          </span>
+          <span
+            style="font-size: 10px"
+            v-if="
+              element.classType !== undefined &&
+              element.classType !== 'col' &&
+              element.columnSize > 1
+            "
+          >
+            {{ element.classType }}
+          </span>
         </span>
       </div>
       <div class="btn-group btn-group-sm" role="group">
-        <DesignRowAndColGesture
-          :item="element"
-          v-if="element.hasTableGenerator || element.columnSize > 2"
-        />
-        <button @click="deleteItem" type="button" class="btn btn-sm text-dark">
+        <DesignRowAndColGesture :item="element" v-if="showRowAndColGesture" />
+        <button
+          :class="textColor"
+          @click="deleteItem"
+          type="button"
+          class="btn btn-sm text-dark"
+        >
           &#x2715;
         </button>
       </div>
     </div>
     <DesignerLayoutChild
       :parent="element"
+      :customFields="customFields"
       :items="element.items"
       v-if="element.container == true"
     />
@@ -81,7 +118,7 @@ import DesignRowAndColGesture from "./DesignRowAndColGesture.vue";
 import panelTextColor from "./PanelTextColorPicker";
 
 export default {
-  props: ["element", "index", "items"],
+  props: ["element", "index", "customFields", "items"],
   name: "DesignItem",
   components: {
     DesignerLayoutChild,
@@ -91,18 +128,37 @@ export default {
   data() {
     return {
       editItems: [],
+      editCustomFields: [],
     };
   },
   created: function () {
     this.editItems = this.items;
+    this.editCustomFields = this.customFields;
   },
   methods: {
     deleteItem: function () {
-      let elementLength = this.editItems[this.index].items.length;
+      let recoveredCustomFields = [];
+      function recoverAllChildCustomFields(element) {
+        if (element && element.items?.length > 0) {
+          element.items.forEach((child) => {
+            if (child.type === "customField") {
+              recoveredCustomFields.push(child);
+            }
+            recoverAllChildCustomFields(child);
+          });
+        }
+      }
+      let elementChildItems = this.element?.items ?? [];
+      let elementLength = elementChildItems.length;
       let message = `Element has ${elementLength} child item${
         elementLength > 1 ? "s" : ""
       }. Are you sure?`;
       if (elementLength === 0 || window.confirm(message)) {
+        if (this.element.type === "customField") {
+          this.editCustomFields.push(this.element);
+        }
+        recoverAllChildCustomFields(this.element);
+        this.editCustomFields.push(...recoveredCustomFields);
         this.editItems.splice(this.index, 1);
       }
     },
@@ -112,7 +168,26 @@ export default {
       return this.element.type !== "row";
     },
     textColor() {
-      return panelTextColor.get(this.element.color);
+      return panelTextColor.get(this.element);
+    },
+    showHeader() {
+      if (
+        this.element.items?.length == 1 &&
+        this.element.items[0].type == "customField"
+      ) {
+        return true;
+      }
+      return (
+        this.element.type == "container" || this.element.items?.length === 0
+      );
+    },
+    showRowAndColGesture() {
+      return (
+        this.element.hasTableGenerator !== undefined &&
+        (this.element.columnSize === 0 ||
+          this.element.columnSize > 2 ||
+          this.element.type === "container")
+      );
     },
   },
 };
@@ -134,5 +209,14 @@ export default {
 .btn-group {
   right: 0;
   position: absolute;
+}
+.relative {
+  position: relative;
+}
+.customField {
+  /* border: 1px solid red;
+  height: 100%;
+  vertical-align: bottom;
+  align-content: center; */
 }
 </style>

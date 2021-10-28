@@ -4,7 +4,7 @@
       <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
           <button
-            class="nav-link active"
+            class="nav-link"
             id="nav-designer-items-tab"
             data-bs-toggle="tab"
             data-bs-target="#nav-designer-items"
@@ -16,7 +16,7 @@
             Design Items
           </button>
           <button
-            class="nav-link"
+            class="nav-link active"
             id="nav-custom-fields-tab"
             data-bs-toggle="tab"
             data-bs-target="#nav-custom-fields"
@@ -31,7 +31,7 @@
       </nav>
       <div class="tab-content" id="nav-tabContent">
         <div
-          class="tab-pane fade show active"
+          class="tab-pane fade"
           id="nav-designer-items"
           role="tabpanel"
           aria-labelledby="nav-designer-items-tab"
@@ -41,7 +41,7 @@
             item-key="id"
             ghost-class="ghost"
             v-bind="{
-              group: { name: 'designItems', pull: 'clone', put: 'false' },
+              group: { name: 'designItems', pull: 'clone', put: false },
               sort: false,
               disabled: false,
               animation: 300,
@@ -57,26 +57,27 @@
           </draggable>
         </div>
         <div
-          class="tab-pane fade"
+          class="tab-pane fade show active"
           id="nav-custom-fields"
           role="tabpanel"
           aria-labelledby="nav-custom-fields-tab"
         >
+          <input class="form-control mb-3" placeholder="Type to search..." />
           <draggable
             :list="customFieldItems"
             item-key="id"
             ghost-class="ghost"
             v-bind="{
-              group: { name: 'designItems', pull: true, put: 'false' },
-              sort: false,
+              group: { name: 'designItems', pull: true, put: true },
+              sort: true,
               disabled: false,
               animation: 300,
             }"
             :clone="onClone"
-            class="btn-group-vertical col-12 gap-2"
+            class="min-vh-100"
           >
             <template #item="{ element }">
-              <button type="button" class="btn btn-outline-secondary">
+              <button type="button" class="m-1 btn btn-outline-secondary">
                 {{ element.name }}
               </button>
             </template>
@@ -91,6 +92,8 @@
         item-key="id"
         @add="onAdd"
         handle=".handle"
+        delay="0"
+        chosenClass="chosen"
         ghost-class="ghost"
         v-bind="{
           group: 'designItems',
@@ -188,6 +191,27 @@ export default {
           name: "Sex",
           columnSize: 0,
         },
+        {
+          id: uuidv4(),
+          type: "customField",
+          customFieldType: "select",
+          name: "City",
+          columnSize: 0,
+        },
+        {
+          id: uuidv4(),
+          type: "customField",
+          customFieldType: "select",
+          name: "Position",
+          columnSize: 0,
+        },
+        {
+          id: uuidv4(),
+          type: "customField",
+          customFieldType: "bool",
+          name: "IsActive",
+          columnSize: 0,
+        },
       ],
       designedItems: [
         {
@@ -238,14 +262,18 @@ html {
   scroll-behavior: smooth;
 }
 
-.row > [class^="col"] {
+.row > [class*="col"] {
   /* padding-top: 0.3rem;
   padding-bottom: 0.3rem; */
   background-color: rgba(166, 166, 166, 0.05);
   border: 1px solid rgba(66, 66, 66, 0.04);
 }
 
-[class^="container-"] {
+/* .row:empty {
+  background-color: white;
+} */
+
+[class*="container"] {
   min-height: 25%;
 }
 
@@ -260,6 +288,12 @@ html {
   background: #c8ebfb;
   border: 2px dashed red !important;
 }
+
+/* .chosen {
+  opacity: 0.4;
+  background: #c8ebfb;
+  border: 2px dashed red !important;
+} */
 
 .root {
   display: flex;
@@ -288,5 +322,9 @@ main {
 
 .offcanvas-start {
   width: 16% !important;
+}
+
+.handle {
+  cursor: move;
 }
 </style>

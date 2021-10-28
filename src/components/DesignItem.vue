@@ -1,57 +1,69 @@
 <template>
-  <div class="card" v-if="element.type === 'panel'">
-    <div
-      class="
-        card-header
-        d-flex
-        justify-content-between
-        align-items-center
-        handle
-      "
-      :class="`bg-${element.color}`"
-    >
-      <div class="d-flex justify-content-between align-items-center">
-        <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
-        <span :class="textColor"
-          >{{ element.title ?? element.name }}
-          <span
-            style="font-size: 10px; position: absolute; top: 30px; left: 40px"
-            v-if="element.columnSize !== undefined && element.columnSize > 1"
-          >
-            12/{{ element.columnSize }}
+  <div v-if="element.type === 'panel'">
+    <div class="card">
+      <div
+        class="
+          card-header
+          d-flex
+          justify-content-between
+          align-items-center
+          handle
+        "
+        :class="`bg-${element.color}`"
+      >
+        <div class="d-flex justify-content-between align-items-center">
+          <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
+          <span :class="textColor"
+            >{{ element.title ?? element.name }}
+            <span
+              class="position-absolute"
+              style="font-size: 10px; top: 30px; left: 40px"
+              v-if="element.columnSize !== undefined && element.columnSize > 1"
+            >
+              12/{{ element.columnSize }}
+            </span>
           </span>
-        </span>
+        </div>
+        <div class="btn-group btn-group-sm" role="group">
+          <DesignRowAndColGesture :item="element" v-if="showRowAndColGesture" />
+          <button
+            @click="deleteItem"
+            type="button"
+            class="btn btn-sm"
+            :class="textColor"
+          >
+            &#x2715;
+          </button>
+        </div>
       </div>
-      <div class="btn-group btn-group-sm" role="group">
-        <DesignRowAndColGesture :item="element" v-if="showRowAndColGesture" />
-        <button
-          @click="deleteItem"
-          type="button"
-          class="btn btn-sm"
-          :class="textColor"
-        >
-          &#x2715;
-        </button>
+      <div class="card-body">
+        <DesignerLayoutChild
+          :parent="element"
+          :items="element.items"
+          v-if="element.container == true"
+        />
       </div>
-    </div>
-    <div class="card-body">
-      <DesignerLayoutChild
-        :parent="element"
-        :items="element.items"
-        v-if="element.container == true"
-      />
     </div>
   </div>
 
-  <div v-else-if="element.type === 'customField'" class="card">
+  <div v-else-if="element.type === 'customField'" class="handle">
     <div
-      class="card-body d-flex justify-content-between align-items-center handle"
+      class="
+        border border-1
+        rounded
+        bg-white
+        d-flex
+        justify-content-between
+        align-items-center
+        p-2
+      "
     >
       <div class="d-flex justify-content-between align-items-center">
         <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
         <span :class="textColor">{{ element.name }}</span>
         <span
-          style="font-size: 10px; position: absolute; top: 40px; left: 40px"
+          class="position-absolute"
+          style="font-size: 10px; top: 40px; left: 40px"
           v-if="parent.columnSize !== undefined && parent.columnSize > 1"
         >
           12/{{ parent.columnSize }}
@@ -68,11 +80,7 @@
     </div>
   </div>
 
-  <div
-    v-else
-    class="relative"
-    :class="[element.type === 'container' ? element.className : '']"
-  >
+  <div v-else :class="[element.type === 'container' ? element.className : '']">
     <div
       v-if="showHeader"
       class="d-flex justify-content-between align-items-center handle"
@@ -197,25 +205,14 @@ export default {
 </script>
 
 <style>
-.element-tools {
-  display: flex;
-  position: relative;
-  top: 0.5rem;
-  right: 1rem;
-}
 .card-header {
   padding-right: 0.2rem !important;
 }
+
 .pointer {
   cursor: pointer;
 }
-.btn-group {
-  right: 0;
-  position: absolute;
-}
-.relative {
-  position: relative;
-}
+
 .customField {
   /* border: 1px solid red;
   height: 100%;

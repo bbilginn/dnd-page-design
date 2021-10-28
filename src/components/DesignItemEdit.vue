@@ -263,7 +263,8 @@ export default {
               : editedItem.classType;
 
           if (
-            (editedItem.type === "panel" || editedItem.type === "customField") &&
+            (editedItem.type === "panel" ||
+              editedItem.type === "customField") &&
             this.editParent
           ) {
             this.editParent.columnSize = editedItem?.columnSize;

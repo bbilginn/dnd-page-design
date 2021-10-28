@@ -48,7 +48,9 @@
 
   <div v-else-if="element.type === 'customField'" class="handle">
     <div
+      :name-value="element.name"
       class="
+        custom-field
         border border-1
         rounded
         bg-white

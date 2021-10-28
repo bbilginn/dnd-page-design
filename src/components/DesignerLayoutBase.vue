@@ -62,9 +62,13 @@
           role="tabpanel"
           aria-labelledby="nav-custom-fields-tab"
         >
-          <input class="form-control mb-3" placeholder="Type to search..." />
+          <input
+            class="form-control mb-3"
+            placeholder="Type to search..."
+            v-model="searchText"
+          />
           <draggable
-            :list="customFieldItems"
+            :list="filteredcustomFieldItems"
             item-key="id"
             ghost-class="ghost"
             v-bind="{
@@ -129,6 +133,7 @@ export default {
   },
   data() {
     return {
+      searchText: "",
       designItems: [
         {
           type: "container",
@@ -213,6 +218,7 @@ export default {
           columnSize: 0,
         },
       ],
+      filteredcustomFieldItems: [],
       designedItems: [
         {
           type: "container",
@@ -226,6 +232,9 @@ export default {
       ],
     };
   },
+  created: function () {
+    this.filteredcustomFieldItems = this.customFieldItems;
+  },
   watch: {
     designedItems: {
       handler(includedItems) {
@@ -238,6 +247,28 @@ export default {
         }
       },
       deep: true,
+    },
+    searchText: {
+      handler(text) {
+        this.filteredcustomFieldItems = this.customFieldItems;
+        this.filteredcustomFieldItems = this.customFieldItems.filter((x) => {
+          return x.name.toLowerCase().includes(text.toLowerCase());
+        });
+        if (text.length === 0) {
+          return;
+        }
+        let customFields = document.getElementsByClassName("custom-field");
+        customFields.forEach((element) => {
+          if (element.getAttribute("name-value").toLowerCase().includes(text)) {
+            element.classList.remove("bg-white");
+            element.classList.add("bg-info");
+            setTimeout(() => {
+              element.classList.remove("bg-info");
+              element.classList.add("bg-white");
+            }, 500);
+          }
+        });
+      },
     },
   },
   methods: {

@@ -63,7 +63,7 @@
           aria-labelledby="nav-custom-fields-tab"
         >
           <draggable
-            :list="customFields"
+            :list="customFieldItems"
             item-key="id"
             ghost-class="ghost"
             v-bind="{
@@ -101,9 +101,10 @@
       >
         <template #item="{ element, index }">
           <DesignItem
+            :parent="null"
             :element="element"
             :index="index"
-            :customFields="customFields"
+            :customFieldItems="customFieldItems"
             :items="designedItems"
           ></DesignItem>
         </template>
@@ -157,7 +158,7 @@ export default {
           name: "Panel",
           title: "Title-0",
           color: "light",
-          columnSize: 12,
+          columnSize: 0,
           container: true,
           items: [],
           hasTableGenerator: true,
@@ -165,24 +166,27 @@ export default {
         { type: "tab", name: "Tab", container: true, items: [] },
         { type: "tabItem", name: "TabItem", container: true, items: [] },
       ],
-      customFields: [
+      customFieldItems: [
         {
+          id: uuidv4(),
           type: "customField",
           customFieldType: "text",
           name: "Name",
-          id: uuidv4(),
+          columnSize: 0,
         },
         {
+          id: uuidv4(),
           type: "customField",
           customFieldType: "number",
           name: "Age",
-          id: uuidv4(),
+          columnSize: 0,
         },
         {
+          id: uuidv4(),
           type: "customField",
           customFieldType: "select",
           name: "Sex",
-          id: uuidv4(),
+          columnSize: 0,
         },
       ],
       designedItems: [
@@ -214,7 +218,7 @@ export default {
   },
   methods: {
     onClone: function (el) {
-      let clonedElement = { ...el };
+      let clonedElement = JSON.parse(JSON.stringify(el));
       clonedElement.id = uuidv4();
       return clonedElement;
     },
@@ -235,8 +239,8 @@ html {
 }
 
 .row > [class^="col"] {
-  /* padding-top: 0.75rem;
-  padding-bottom: 0.75rem; */
+  /* padding-top: 0.3rem;
+  padding-bottom: 0.3rem; */
   background-color: rgba(166, 166, 166, 0.05);
   border: 1px solid rgba(66, 66, 66, 0.04);
 }
@@ -254,6 +258,7 @@ html {
 .ghost {
   opacity: 0.4;
   background: #c8ebfb;
+  border: 2px dashed red !important;
 }
 
 .root {

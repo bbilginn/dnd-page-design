@@ -207,11 +207,12 @@
 import panelTextColor from "./PanelTextColorPicker";
 
 export default {
-  props: ["item"],
+  props: ["parent", "item"],
   name: "DesignItemEdit",
   data() {
     return {
       editItem: null,
+      editParent: null,
       containerClassTypes: [
         "container",
         "container-sm",
@@ -244,6 +245,7 @@ export default {
   },
   created: function () {
     this.editItem = this.item;
+    this.editParent = this.parent;
   },
   mounted: function () {
     var offCanvas = document.getElementById(`offcanvas-${this.editItem.id}`);
@@ -255,10 +257,20 @@ export default {
     editItem: {
       handler(editedItem) {
         if (editedItem?.columnSize !== undefined) {
-          if (editedItem.columnSize > 0) {
-            editedItem.className = `${editedItem.classType}-${editedItem.columnSize}`;
-          } else {
-            editedItem.className = editedItem.classType;
+          editedItem.className =
+            editedItem.columnSize > 0
+              ? `${editedItem.classType}-${editedItem.columnSize}`
+              : editedItem.classType;
+
+          if (
+            (editedItem.type === "panel" || editedItem.type === "customField") &&
+            this.editParent
+          ) {
+            this.editParent.columnSize = editedItem?.columnSize;
+            this.editParent.className =
+              this.editParent.columnSize > 0
+                ? `${this.editParent.classType}-${editedItem.columnSize}`
+                : this.editParent.classType;
           }
         }
       },

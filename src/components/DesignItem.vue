@@ -11,14 +11,15 @@
       :class="`bg-${element.color}`"
     >
       <div class="d-flex justify-content-between align-items-center">
-        <DesignItemEdit :item="element" v-if="noEdit" />
-        <span :class="textColor">{{ element.title ?? element.name }}</span>
-        <span
-          :class="textColor"
-          style="font-size: 10px; position: absolute; top: 30px; left: 40px"
-          v-if="element.columnSize !== undefined && element.columnSize > 1"
-        >
-          12/{{ element.columnSize }}
+        <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
+        <span :class="textColor"
+          >{{ element.title ?? element.name }}
+          <span
+            style="font-size: 10px; position: absolute; top: 30px; left: 40px"
+            v-if="element.columnSize !== undefined && element.columnSize > 1"
+          >
+            12/{{ element.columnSize }}
+          </span>
         </span>
       </div>
       <div class="btn-group btn-group-sm" role="group">
@@ -42,11 +43,19 @@
     </div>
   </div>
 
-  <div v-else-if="element.type === 'customField'" class="customField relative">
-    <div class="d-flex justify-content-between align-items-center handle">
+  <div v-else-if="element.type === 'customField'" class="card">
+    <div
+      class="card-body d-flex justify-content-between align-items-center handle"
+    >
       <div class="d-flex justify-content-between align-items-center">
-        <DesignItemEdit :item="element" v-if="noEdit" />
+        <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
         <span :class="textColor">{{ element.name }}</span>
+        <span
+          style="font-size: 10px; position: absolute; top: 40px; left: 40px"
+          v-if="parent.columnSize !== undefined && parent.columnSize > 1"
+        >
+          12/{{ parent.columnSize }}
+        </span>
       </div>
       <button
         :class="textColor"
@@ -69,7 +78,7 @@
       class="d-flex justify-content-between align-items-center handle"
     >
       <div class="d-flex justify-content-between align-items-center">
-        <DesignItemEdit :item="element" v-if="noEdit" />
+        <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
         <span :class="textColor">
           {{ element.name }}
           <span
@@ -104,7 +113,7 @@
     </div>
     <DesignerLayoutChild
       :parent="element"
-      :customFields="customFields"
+      :customFieldItems="customFieldItems"
       :items="element.items"
       v-if="element.container == true"
     />
@@ -118,7 +127,7 @@ import DesignRowAndColGesture from "./DesignRowAndColGesture.vue";
 import panelTextColor from "./PanelTextColorPicker";
 
 export default {
-  props: ["element", "index", "customFields", "items"],
+  props: ["parent", "element", "index", "customFieldItems", "items"],
   name: "DesignItem",
   components: {
     DesignerLayoutChild,
@@ -128,23 +137,23 @@ export default {
   data() {
     return {
       editItems: [],
-      editCustomFields: [],
+      editcustomFieldItems: [],
     };
   },
   created: function () {
     this.editItems = this.items;
-    this.editCustomFields = this.customFields;
+    this.editcustomFieldItems = this.customFieldItems;
   },
   methods: {
     deleteItem: function () {
-      let recoveredCustomFields = [];
-      function recoverAllChildCustomFields(element) {
+      let recoveredcustomFieldItems = [];
+      function recoverAllChildcustomFieldItems(element) {
         if (element && element.items?.length > 0) {
           element.items.forEach((child) => {
             if (child.type === "customField") {
-              recoveredCustomFields.push(child);
+              recoveredcustomFieldItems.push(child);
             }
-            recoverAllChildCustomFields(child);
+            recoverAllChildcustomFieldItems(child);
           });
         }
       }
@@ -155,10 +164,10 @@ export default {
       }. Are you sure?`;
       if (elementLength === 0 || window.confirm(message)) {
         if (this.element.type === "customField") {
-          this.editCustomFields.push(this.element);
+          this.editcustomFieldItems.push(this.element);
         }
-        recoverAllChildCustomFields(this.element);
-        this.editCustomFields.push(...recoveredCustomFields);
+        recoverAllChildcustomFieldItems(this.element);
+        this.editcustomFieldItems.push(...recoveredcustomFieldItems);
         this.editItems.splice(this.index, 1);
       }
     },
@@ -171,12 +180,6 @@ export default {
       return panelTextColor.get(this.element);
     },
     showHeader() {
-      if (
-        this.element.items?.length == 1 &&
-        this.element.items[0].type == "customField"
-      ) {
-        return true;
-      }
       return (
         this.element.type == "container" || this.element.items?.length === 0
       );

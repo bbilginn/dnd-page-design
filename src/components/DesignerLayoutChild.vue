@@ -12,6 +12,7 @@
         group: 'designItems',
         disabled: false,
         animation: 300,
+        swapThreshold: 0.75,
       }"
       :disabled="locked"
       :move="checkMove"
@@ -22,9 +23,10 @@
           :class="element.type === 'column' ? `${element.className}` : 'col-12'"
         >
           <DesignItem
+            :parent="parent"
             :element="element"
             :index="index"
-            :customFields="customFields"
+            :customFieldItems="customFieldItems"
             :items="items"
           />
         </div>
@@ -38,7 +40,7 @@ import draggable from "vuedraggable";
 import DesignItem from "./DesignItem.vue";
 
 export default {
-  props: ["parent", "customFields", "items"],
+  props: ["parent", "customFieldItems", "items"],
   name: "DesignerLayoutChild",
   components: {
     draggable,

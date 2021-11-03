@@ -39,6 +39,7 @@
             :id="`title-input-${editItem.id}`"
             placeholder="Title"
             v-model="editItem.title"
+            @click="$event.target.select()"
           />
         </div>
         <div class="mb-3" v-if="showColumnRanger">

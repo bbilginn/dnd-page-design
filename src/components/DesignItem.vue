@@ -83,7 +83,7 @@
   </div>
 
   <div v-else-if="element.type === 'tab'">
-    <div class="card">
+    <div class="border rounded">
       <div
         class="
           d-flex
@@ -118,7 +118,7 @@
           </button>
         </div>
       </div>
-      <div class="card-body pt-1">
+      <div class="p-2">
         <nav>
           <div
             class="nav"
@@ -143,7 +143,7 @@
             </button>
           </div>
         </nav>
-        <div class="tab-content" id="nav-tabContent">
+        <div class="tab-content" :id="`nav-tabContent-${element.id}`">
           <div
             v-for="(item, index) in tabItems"
             :key="index"

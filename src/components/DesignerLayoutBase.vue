@@ -171,8 +171,18 @@ export default {
           items: [],
           hasTableGenerator: true,
         },
-        { type: "tab", name: "Tab", container: true, items: [] },
-        { type: "tabItem", name: "TabItem", container: true, items: [] },
+        {
+          type: "tab",
+          name: "Tab",
+          columnSize: 0,
+          container: true,
+          tabType: "nav-tabs",
+          isJustified: false,
+          items: [
+            { type: "tabItem", name: "Home", container: true, items: [] },
+            { type: "tabItem", name: "Profile", container: true, items: [] },
+          ],
+        },
       ],
       customFieldItems: [
         {
@@ -275,6 +285,13 @@ export default {
     onClone: function (el) {
       let clonedElement = JSON.parse(JSON.stringify(el));
       clonedElement.id = uuidv4();
+
+      if (clonedElement.type === "tab") {
+        clonedElement.items.forEach((x) => {
+          x["id"] = uuidv4();
+        });
+      }
+
       return clonedElement;
     },
     onAdd: function () {

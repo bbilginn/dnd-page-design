@@ -1,5 +1,5 @@
 <template>
-  <div class="text-dark">
+  <div class="text-dark" style="cursor: default">
     <div
       @click="addFlexPosition"
       class="pointer"
@@ -41,7 +41,7 @@
             v-model="editItem.title"
           />
         </div>
-        <div class="mb-3" v-if="editItem.columnSize !== undefined">
+        <div class="mb-3" v-if="showColumnRanger">
           <label :for="`colRange-${editItem.id}`" class="form-label"
             >Column Range (12/{{ editItem.columnSize }})</label
           >
@@ -198,6 +198,54 @@
             >
           </div>
         </div>
+        <div class="mb-3" v-if="editItem.type === 'tab'">
+          <label :for="`tab-type-${editItem.id}`" class="form-label"
+            >Type</label
+          >
+          <br />
+          <div
+            :id="`tab-type-${editItem.id}`"
+            class="btn-group-vertical col-12 gap-2"
+          >
+            <div
+              class="btn-group-vertical col-12 gap-2"
+              v-for="(columnClassName, index) in tabTypes"
+              :key="index"
+            >
+              <input
+                type="radio"
+                class="btn-check"
+                :name="`tab-type-${editItem.id}`"
+                :id="`${columnClassName}-outlined-${editItem.id}`"
+                autocomplete="off"
+                :value="columnClassName"
+                v-model="editItem.tabType"
+                :checked="editItem.tabType === columnClassName"
+              />
+              <label
+                class="btn btn-outline-secondary"
+                :for="`${columnClassName}-outlined-${editItem.id}`"
+                >{{ columnClassName }}</label
+              >
+            </div>
+          </div>
+        </div>
+        <div class="mb-3" v-if="editItem.type === 'tab'">
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              role="switch"
+              :id="`tab-justify-${editItem.id}`"
+              :value="editItem.isJustified"
+              v-model="editItem.isJustified"
+              :checked="editItem.isJustified"
+            />
+            <label class="form-check-label" :for="`tab-justify-${editItem.id}`"
+              >Justified
+            </label>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -241,6 +289,7 @@ export default {
         "light",
         "dark",
       ],
+      tabTypes: ["nav-pills", "nav-tabs"],
     };
   },
   created: function () {
@@ -263,9 +312,11 @@ export default {
               : editedItem.classType;
 
           if (
-            (editedItem.type === "panel" ||
+            (editedItem.type === "tab" ||
+              editedItem.type === "panel" ||
               editedItem.type === "customField") &&
-            this.editParent
+            this.editParent &&
+            this.editParent.type === "column"
           ) {
             this.editParent.columnSize = editedItem?.columnSize;
             this.editParent.className =
@@ -287,6 +338,17 @@ export default {
   computed: {
     textColor() {
       return panelTextColor.get(this.editItem);
+    },
+    showColumnRanger() {
+      if (
+        this.editItem.columnSize !== undefined &&
+        this.editParent &&
+        this.editParent.type !== "column" &&
+        this.editItem.type !== "column"
+      ) {
+        return false;
+      }
+      return true;
     },
   },
 };

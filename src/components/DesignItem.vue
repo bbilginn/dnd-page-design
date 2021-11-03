@@ -16,8 +16,8 @@
           <span :class="textColor"
             >{{ element.title ?? element.name }}
             <span
-              class="position-absolute"
-              style="font-size: 10px; top: 30px; left: 40px"
+              class="fw-lighter"
+              style="font-size: 10px"
               v-if="element.columnSize !== undefined && element.columnSize > 1"
             >
               12/{{ element.columnSize }}
@@ -64,8 +64,8 @@
         <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
         <span :class="textColor">{{ element.name }}</span>
         <span
-          class="position-absolute"
-          style="font-size: 10px; top: 40px; left: 40px"
+          class="fw-lighter"
+          style="font-size: 10px"
           v-if="parent.columnSize !== undefined && parent.columnSize > 1"
         >
           12/{{ parent.columnSize }}
@@ -82,6 +82,89 @@
     </div>
   </div>
 
+  <div v-else-if="element.type === 'tab'">
+    <div class="card">
+      <div
+        class="
+          d-flex
+          justify-content-between
+          align-items-center
+          handle
+          pt-1
+          ps-3
+        "
+      >
+        <div class="d-flex justify-content-between align-items-center">
+          <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
+          <span :class="textColor">
+            {{ element.name }}
+            <span
+              class="fw-lighter"
+              style="font-size: 10px"
+              v-if="element.columnSize !== undefined && element.columnSize > 1"
+            >
+              12/{{ element.columnSize }}
+            </span>
+          </span>
+        </div>
+        <div class="btn-group btn-group-sm" role="group">
+          <button
+            :class="textColor"
+            @click="deleteItem"
+            type="button"
+            class="btn btn-sm text-dark"
+          >
+            &#x2715;
+          </button>
+        </div>
+      </div>
+      <div class="card-body pt-1">
+        <nav>
+          <div
+            class="nav"
+            :class="[element.tabType, { 'nav-justified': element.isJustified }]"
+            :id="element.id"
+            role="tablist"
+          >
+            <button
+              v-for="(item, index) in tabItems"
+              :key="index"
+              class="nav-link"
+              :class="{ ' active': index === 0 }"
+              :id="`nav-${index}-tab`"
+              data-bs-toggle="tab"
+              :data-bs-target="`#nav-${item.id}`"
+              :aria-controls="item.id"
+              type="button"
+              role="tab"
+              aria-selected="true"
+            >
+              {{ item.name }}
+            </button>
+          </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+          <div
+            v-for="(item, index) in tabItems"
+            :key="index"
+            class="tab-pane fade"
+            :class="{ 'show active': index === 0 }"
+            :id="`nav-${item.id}`"
+            role="tabpanel"
+            :aria-labelledby="`nav-${item.id}-tab`"
+          >
+            <div
+              class="border rounded-bottom p-2"
+              :class="{ 'border-top-0': element.tabType === 'nav-tabs' }"
+            >
+              {{ item.name }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div v-else :class="[element.type === 'container' ? element.className : '']">
     <div
       v-if="showHeader"
@@ -92,12 +175,14 @@
         <span :class="textColor">
           {{ element.name }}
           <span
-            style="font-size: 10px; margin-right: 2px"
+            class="fw-lighter me-1"
+            style="font-size: 10px"
             v-if="element.columnSize !== undefined && element.columnSize > 1"
           >
             12/{{ element.columnSize }}
           </span>
           <span
+            class="fw-lighter"
             style="font-size: 10px"
             v-if="
               element.classType !== undefined &&
@@ -201,6 +286,12 @@ export default {
           this.element.columnSize > 2 ||
           this.element.type === "container")
       );
+    },
+    tabItems: function () {
+      let elementChildItems = this.element?.items ?? [];
+      return elementChildItems.sort(function (a, b) {
+        return a.order - b.order;
+      });
     },
   },
 };

@@ -164,7 +164,7 @@ export default {
         {
           type: "panel",
           name: "Panel",
-          title: "Title-0",
+          title: "Title",
           color: "light",
           columnSize: 0,
           container: true,

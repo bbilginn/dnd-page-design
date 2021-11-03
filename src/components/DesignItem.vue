@@ -27,7 +27,7 @@
         <div class="btn-group btn-group-sm" role="group">
           <DesignRowAndColGesture :item="element" v-if="showRowAndColGesture" />
           <button
-            @click="deleteItem"
+            @click="deleteItem(editItems, element)"
             type="button"
             class="btn btn-sm"
             :class="textColor"
@@ -73,7 +73,7 @@
       </div>
       <button
         :class="textColor"
-        @click="deleteItem"
+        @click="deleteItem(editItems, element)"
         type="button"
         class="btn btn-sm"
       >
@@ -110,7 +110,7 @@
         <div class="btn-group btn-group-sm" role="group">
           <button
             :class="textColor"
-            @click="deleteItem"
+            @click="deleteItem(editItems, element)"
             type="button"
             class="btn btn-sm text-dark"
           >
@@ -154,10 +154,27 @@
             :aria-labelledby="`nav-${item.id}-tab`"
           >
             <div
-              class="border rounded-bottom p-2"
+              class="border rounded-bottom p-3"
               :class="{ 'border-top-0': element.tabType === 'nav-tabs' }"
             >
-              {{ item.name }}
+              <div class="d-flex justify-content-end align-items-center">
+                <div class="btn-group btn-group-sm" role="group">
+                  <DesignRowAndColGesture :item="item" />
+                  <button
+                    :class="textColor"
+                    @click="deleteItem(element.items, item)"
+                    type="button"
+                    class="btn btn-sm text-dark"
+                  >
+                    &#x2715;
+                  </button>
+                </div>
+              </div>
+              <DesignerLayoutChild
+                :parent="item"
+                :customFieldItems="customFieldItems"
+                :items="item.items"
+              />
             </div>
           </div>
         </div>
@@ -198,7 +215,7 @@
         <DesignRowAndColGesture :item="element" v-if="showRowAndColGesture" />
         <button
           :class="textColor"
-          @click="deleteItem"
+          @click="deleteItem(editItems, element)"
           type="button"
           class="btn btn-sm text-dark"
         >
@@ -240,11 +257,11 @@ export default {
     this.editcustomFieldItems = this.customFieldItems;
   },
   methods: {
-    deleteItem: function () {
+    deleteItem: function (items, deleted) {
       let recoveredcustomFieldItems = [];
-      function recoverAllChildcustomFieldItems(element) {
-        if (element && element.items?.length > 0) {
-          element.items.forEach((child) => {
+      function recoverAllChildcustomFieldItems(el) {
+        if (el && el.items?.length > 0) {
+          el.items.forEach((child) => {
             if (child.type === "customField") {
               recoveredcustomFieldItems.push(child);
             }
@@ -252,18 +269,19 @@ export default {
           });
         }
       }
-      let elementChildItems = this.element?.items ?? [];
+      let elementChildItems = deleted?.items ?? [];
       let elementLength = elementChildItems.length;
       let message = `Element has ${elementLength} child item${
         elementLength > 1 ? "s" : ""
       }. Are you sure?`;
       if (elementLength === 0 || window.confirm(message)) {
-        if (this.element.type === "customField") {
-          this.editcustomFieldItems.push(this.element);
+        if (deleted.type === "customField") {
+          this.editcustomFieldItems?.push(deleted);
         }
-        recoverAllChildcustomFieldItems(this.element);
-        this.editcustomFieldItems.push(...recoveredcustomFieldItems);
-        this.editItems.splice(this.index, 1);
+        recoverAllChildcustomFieldItems(deleted);
+        this.editcustomFieldItems?.push(...recoveredcustomFieldItems);
+        let index = items.indexOf(deleted);
+        items.splice(index, 1);
       }
     },
   },

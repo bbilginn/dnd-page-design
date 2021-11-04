@@ -4,7 +4,7 @@
       class="btn btn-sm dropdown-toggle"
       :class="textColor"
       type="button"
-      id="dropdownMenuButton1"
+      :id="`gesture-${item.id}`"
       data-bs-toggle="dropdown"
       aria-expanded="false"
     >

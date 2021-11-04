@@ -247,6 +247,59 @@
             </label>
           </div>
         </div>
+        <div class="mb-3" v-if="editItem.type === 'tab'">
+          <label :for="`tab-item-${editItem.id}`" class="form-label"
+            >Tab Items</label
+          >
+          <br />
+
+          <draggable
+            tag="ul"
+            :list="editItem.items"
+            item-key="id"
+            ghost-class="ghost"
+            handle=".handle"
+            v-bind="{
+              group: { name: 'items' },
+              sort: true,
+              disabled: false,
+              animation: 300,
+            }"
+            class="list-group"
+          >
+            <template #item="{ element }">
+              <li
+                class="
+                  list-group-item
+                  d-flex
+                  justify-content-between
+                  align-items-center
+                "
+              >
+                <fa icon="arrows-alt-v" class="handle" />
+                <input
+                  type="text"
+                  class="form-control mx-2"
+                  v-model="element.name"
+                  @click="$event.target.select()"
+                />
+                <button
+                  @click="this.$parent.deleteItem(editItem.items, element)"
+                  type="button"
+                  class="btn btn-sm text-dark position-absolute end-0"
+                >
+                  &#x2715;
+                </button>
+              </li>
+            </template>
+
+            <template #footer>
+              <div class="btn-group" role="group">
+                <button class="btn" @click="addNewTabItem"><fa icon="plus" class="text-success" /></button>
+              </div>
+            </template>
+          </draggable>
+        </div>
       </div>
     </div>
   </div>
@@ -254,10 +307,15 @@
 
 <script>
 import panelTextColor from "./PanelTextColorPicker";
+import draggable from "vuedraggable";
+import { v4 as uuidv4 } from "uuid";
 
 export default {
   props: ["parent", "item"],
   name: "DesignItemEdit",
+  components: {
+    draggable,
+  },
   data() {
     return {
       editItem: null,
@@ -291,11 +349,13 @@ export default {
         "dark",
       ],
       tabTypes: ["nav-pills", "nav-tabs"],
+      tabItemIndex: 0,
     };
   },
   created: function () {
     this.editItem = this.item;
     this.editParent = this.parent;
+    this.tabItemIndex = this.editItem.items.length;
   },
   mounted: function () {
     var offCanvas = document.getElementById(`offcanvas-${this.editItem.id}`);
@@ -334,6 +394,16 @@ export default {
     addFlexPosition: function () {
       document.getElementById(`offcanvas-${this.editItem.id}`).style.position =
         "fixed";
+    },
+    addNewTabItem: function () {
+      this.tabItemIndex++;
+      this.editItem.items.push({
+        id: uuidv4(),
+        type: "tabItem",
+        name: `Item-${this.tabItemIndex}`,
+        container: true,
+        items: [],
+      });
     },
   },
   computed: {

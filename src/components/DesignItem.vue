@@ -72,10 +72,9 @@
         </span>
       </div>
       <button
-        :class="textColor"
         @click="deleteItem(editItems, element)"
         type="button"
-        class="btn btn-sm"
+        class="btn btn-sm text-dark"
       >
         &#x2715;
       </button>
@@ -109,7 +108,6 @@
         </div>
         <div class="btn-group btn-group-sm" role="group">
           <button
-            :class="textColor"
             @click="deleteItem(editItems, element)"
             type="button"
             class="btn btn-sm text-dark"
@@ -127,8 +125,8 @@
             role="tablist"
           >
             <button
-              v-for="(item, index) in tabItems"
-              :key="index"
+              v-for="(item, index) in element.items"
+              :key="item.id"
               class="nav-link"
               :class="{ ' active': index === 0 }"
               :id="`nav-${index}-tab`"
@@ -145,8 +143,8 @@
         </nav>
         <div class="tab-content" :id="`nav-tabContent-${element.id}`">
           <div
-            v-for="(item, index) in tabItems"
-            :key="index"
+            v-for="(item, index) in element.items"
+            :key="item.id"
             class="tab-pane fade"
             :class="{ 'show active': index === 0 }"
             :id="`nav-${item.id}`"
@@ -161,7 +159,6 @@
                 <div class="btn-group btn-group-sm" role="group">
                   <DesignRowAndColGesture :item="item" />
                   <button
-                    :class="textColor"
                     @click="deleteItem(element.items, item)"
                     type="button"
                     class="btn btn-sm text-dark"
@@ -214,7 +211,6 @@
       <div class="btn-group btn-group-sm" role="group">
         <DesignRowAndColGesture :item="element" v-if="showRowAndColGesture" />
         <button
-          :class="textColor"
           @click="deleteItem(editItems, element)"
           type="button"
           class="btn btn-sm text-dark"
@@ -304,12 +300,6 @@ export default {
           this.element.columnSize > 2 ||
           this.element.type === "container")
       );
-    },
-    tabItems: function () {
-      let elementChildItems = this.element?.items ?? [];
-      return elementChildItems.sort(function (a, b) {
-        return a.order - b.order;
-      });
     },
   },
 };

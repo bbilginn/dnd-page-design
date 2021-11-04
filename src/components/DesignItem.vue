@@ -141,7 +141,7 @@
             </button>
           </div>
         </nav>
-        <div class="tab-content" :id="`nav-tabContent-${element.id}`">
+        <div class="tab-content bg-white" :id="`nav-tabContent-${element.id}`">
           <div
             v-for="(item, index) in element.items"
             :key="item.id"

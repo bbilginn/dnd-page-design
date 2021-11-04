@@ -179,8 +179,7 @@ export default {
           tabType: "nav-tabs",
           isJustified: false,
           items: [
-            { type: "tabItem", name: "Home", container: true, items: [] },
-            { type: "tabItem", name: "Profile", container: true, items: [] },
+            { type: "tabItem", name: "Item-1", container: true, items: [] },
           ],
         },
       ],

@@ -295,7 +295,7 @@
 
             <template #footer>
               <div class="btn-group" role="group">
-                <button class="btn" @click="addNewTabItem"><fa icon="plus" class="text-success" /></button>
+                <button class="btn" @click="this.$parent.addNewTabItem"><fa icon="plus" class="text-success" /></button>
               </div>
             </template>
           </draggable>
@@ -308,7 +308,6 @@
 <script>
 import panelTextColor from "./PanelTextColorPicker";
 import draggable from "vuedraggable";
-import { v4 as uuidv4 } from "uuid";
 
 export default {
   props: ["parent", "item"],
@@ -349,13 +348,11 @@ export default {
         "dark",
       ],
       tabTypes: ["nav-pills", "nav-tabs"],
-      tabItemIndex: 0,
     };
   },
   created: function () {
     this.editItem = this.item;
     this.editParent = this.parent;
-    this.tabItemIndex = this.editItem.items.length;
   },
   mounted: function () {
     var offCanvas = document.getElementById(`offcanvas-${this.editItem.id}`);
@@ -394,16 +391,6 @@ export default {
     addFlexPosition: function () {
       document.getElementById(`offcanvas-${this.editItem.id}`).style.position =
         "fixed";
-    },
-    addNewTabItem: function () {
-      this.tabItemIndex++;
-      this.editItem.items.push({
-        id: uuidv4(),
-        type: "tabItem",
-        name: `Item-${this.tabItemIndex}`,
-        container: true,
-        items: [],
-      });
     },
   },
   computed: {

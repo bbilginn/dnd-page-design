@@ -120,7 +120,11 @@
         <nav>
           <div
             class="nav"
-            :class="[element.tabType, { 'nav-justified': element.isJustified }]"
+            :class="[
+              element.tabType,
+              { 'nav-justified': element.isJustified },
+              { 'border-0': element?.items?.length === 0 },
+            ]"
             :id="element.id"
             role="tablist"
           >
@@ -138,6 +142,9 @@
               aria-selected="true"
             >
               {{ item.name }}
+            </button>
+            <button class="nav-link" @click="addNewTabItem">
+              <fa icon="plus" class="text-success" />
             </button>
           </div>
         </nav>
@@ -233,6 +240,7 @@ import DesignerLayoutChild from "./DesignerLayoutChild.vue";
 import DesignItemEdit from "./DesignItemEdit.vue";
 import DesignRowAndColGesture from "./DesignRowAndColGesture.vue";
 import panelTextColor from "./PanelTextColorPicker";
+import { v4 as uuidv4 } from "uuid";
 
 export default {
   props: ["parent", "element", "index", "customFieldItems", "items"],
@@ -244,13 +252,16 @@ export default {
   },
   data() {
     return {
+      editItem: this.element,
       editItems: [],
       editcustomFieldItems: [],
+      tabItemIndex: 0,
     };
   },
   created: function () {
     this.editItems = this.items;
     this.editcustomFieldItems = this.customFieldItems;
+    this.tabItemIndex = this.editItem?.items?.length ?? 0;
   },
   methods: {
     deleteItem: function (items, deleted) {
@@ -279,6 +290,16 @@ export default {
         let index = items.indexOf(deleted);
         items.splice(index, 1);
       }
+    },
+    addNewTabItem: function () {
+      this.tabItemIndex++;
+      this.editItem.items.push({
+        id: uuidv4(),
+        type: "tabItem",
+        name: `Item-${this.tabItemIndex}`,
+        container: true,
+        items: [],
+      });
     },
   },
   computed: {

@@ -36,7 +36,7 @@
           </button>
         </div>
       </div>
-      <div class="card-body">
+      <div class="card-body" :class="{ collapse: element.isCollapsed }">
         <DesignerLayoutChild
           :parent="element"
           :items="element.items"
@@ -134,7 +134,7 @@
                 v-for="(item, index) in element.items"
                 :key="item.id"
                 class="nav-link"
-                :class="{ ' active': index === 0 }"
+                :class="{ active: index === 0 }"
                 :id="`nav-${index}-tab`"
                 data-bs-toggle="tab"
                 :data-bs-target="`#nav-${item.id}`"
@@ -153,10 +153,7 @@
             </div>
           </div>
           <div class="card-body">
-            <div
-              class="tab-content"
-              :id="`nav-tabContent-${element.id}`"
-            >
+            <div class="tab-content" :id="`nav-tabContent-${element.id}`">
               <div
                 v-for="(item, index) in element.items"
                 :key="item.id"

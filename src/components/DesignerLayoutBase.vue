@@ -170,6 +170,7 @@ export default {
           container: true,
           items: [],
           hasTableGenerator: true,
+          isCollapsed: false,
         },
         {
           type: "tab",

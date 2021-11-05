@@ -109,6 +109,22 @@
             >
           </div>
         </div>
+        <div class="mb-3" v-if="editItem.type === 'panel'">
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              role="switch"
+              :id="`collapsed-${editItem.id}`"
+              :value="editItem.isCollapsed"
+              v-model="editItem.isCollapsed"
+              :checked="editItem.isCollapsed"
+            />
+            <label class="form-check-label" :for="`collapsed-${editItem.id}`"
+              >Collapsed
+            </label>
+          </div>
+        </div>
         <div class="mb-3" v-if="editItem.type === 'container'">
           <label :for="`container-size-${editItem.id}`" class="form-label"
             >Size</label
@@ -295,7 +311,9 @@
 
             <template #footer>
               <div class="btn-group" role="group">
-                <button class="btn" @click="this.$parent.addNewTabItem"><fa icon="plus" class="text-success" /></button>
+                <button class="btn" @click="this.$parent.addNewTabItem">
+                  <fa icon="plus" class="text-success" />
+                </button>
               </div>
             </template>
           </draggable>

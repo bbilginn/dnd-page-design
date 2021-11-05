@@ -121,7 +121,7 @@
               size="lg"
               class="me-1"
             />
-            <div>{{ element.message }}</div>
+            <div v-html="element.message" />
           </div>
         </div>
       </div>
@@ -193,7 +193,10 @@
                 {{ item.name }}
               </button>
               <div class="ps-1 pe-2">
-                <button class="btn" @click="addNewTabItem">
+                <button
+                  class="btn"
+                  @click="addNewChildItem(`${element.type}Item`)"
+                >
                   <fa icon="plus" class="text-success" />
                 </button>
               </div>
@@ -222,6 +225,92 @@
                     </button>
                   </div>
                 </div>
+                <DesignerLayoutChild
+                  :parent="item"
+                  :customFieldItems="customFieldItems"
+                  :items="item.items"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div v-else-if="element.type === 'accordion'">
+    <div class="border rounded">
+      <div
+        class="
+          d-flex
+          justify-content-between
+          align-items-center
+          handle
+          pt-1
+          ps-3
+        "
+      >
+        <div class="d-flex justify-content-between align-items-center">
+          <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
+          <span>
+            {{ element.name }}
+          </span>
+        </div>
+        <div class="btn-group btn-group-sm" role="group">
+          <button
+            @click="deleteItem(editItems, element)"
+            type="button"
+            class="btn btn-sm text-dark"
+          >
+            &#x2715;
+          </button>
+        </div>
+      </div>
+      <div class="p-2">
+        <div class="accordion" :id="`accordion-${element.id}`">
+          <div
+            class="accordion-item"
+            v-for="(item, index) in element.items"
+            :key="item.id"
+          >
+            <h2 class="accordion-header" :id="`header-${item.id}`">
+              <button
+                class="accordion-button"
+                :class="{ collapsed: index !== 0 }"
+                type="button"
+                data-bs-toggle="collapse"
+                :data-bs-target="`#collapse-${item.id}`"
+                :aria-expanded="index === 0"
+                :aria-controls="`collapse-${item.id}`"
+              >
+                {{ item.name }}
+              </button>
+            </h2>
+            <div
+              :id="`collapse-${item.id}`"
+              class="accordion-collapse collapse"
+              :class="{ show: index === 0 }"
+              :aria-labelledby="`header-${item.id}`"
+              :data-bs-parent="`#accordion-${element.id}`"
+            >
+              <div class="accordion-body">
+                <div class="d-flex justify-content-end align-items-center">
+                  <div class="btn-group btn-group-sm" role="group">
+                    <DesignRowAndColGesture :item="item" />
+                    <button
+                      @click="deleteItem(element.items, item)"
+                      type="button"
+                      class="btn btn-sm text-dark"
+                    >
+                      &#x2715;
+                    </button>
+                  </div>
+                </div>
+                <div
+                  v-if="item.content !== ''"
+                  v-html="item.content"
+                  class="mb-3"
+                />
                 <DesignerLayoutChild
                   :parent="item"
                   :customFieldItems="customFieldItems"
@@ -304,13 +393,13 @@ export default {
       editItem: this.element,
       editItems: [],
       editcustomFieldItems: [],
-      tabItemIndex: 0,
+      childItemIndex: 0,
     };
   },
   created: function () {
     this.editItems = this.items;
     this.editcustomFieldItems = this.customFieldItems;
-    this.tabItemIndex = this.editItem?.items?.length ?? 0;
+    this.childItemIndex = this.editItem?.items?.length ?? 0;
   },
   methods: {
     deleteItem: function (items, deleted) {
@@ -327,7 +416,9 @@ export default {
       }
       let elementChildItems = deleted?.items ?? [];
       let elementLength = elementChildItems.length;
-      let message = `Element has ${elementLength} child item${
+      let message = `${
+        deleted?.name ?? "Element"
+      } has ${elementLength} child item${
         elementLength > 1 ? "s" : ""
       }. Are you sure?`;
       if (elementLength === 0 || window.confirm(message)) {
@@ -340,12 +431,13 @@ export default {
         items.splice(index, 1);
       }
     },
-    addNewTabItem: function () {
-      this.tabItemIndex++;
+    addNewChildItem: function (type) {
+      console.log(type);
+      this.childItemIndex++;
       this.editItem.items.push({
         id: uuidv4(),
-        type: "tabItem",
-        name: `Item-${this.tabItemIndex}`,
+        type: type,
+        name: `Item #${this.childItemIndex}`,
         container: true,
         items: [],
       });

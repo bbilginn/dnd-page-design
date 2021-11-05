@@ -59,11 +59,12 @@
             @click="$event.target.select()"
           />
           <div :id="`icon-${editItem.id}`" class="form-text">
-            Please copy-paste an icon value from <a
+            Please copy-paste an icon value from
+            <a
               href="https://fontawesome.com/v5.15/icons?d=gallery&p=1&m=free"
               target="_blank"
               >fontawesome</a
-            >.            
+            >.
           </div>
         </div>
         <div class="mb-3" v-if="editItem.type === 'alert'">
@@ -298,12 +299,14 @@
             </label>
           </div>
         </div>
-        <div class="mb-3" v-if="editItem.type === 'tab'">
+        <div
+          class="mb-3"
+          v-if="editItem.type === 'tab' || editItem.type === 'accordion'"
+        >
           <label :for="`tab-item-${editItem.id}`" class="form-label"
-            >Tab Items</label
+            >Child Items</label
           >
           <br />
-
           <draggable
             tag="ul"
             :list="editItem.items"
@@ -319,34 +322,39 @@
             class="list-group"
           >
             <template #item="{ element }">
-              <li
-                class="
-                  list-group-item
-                  d-flex
-                  justify-content-between
-                  align-items-center
-                "
-              >
-                <fa icon="arrows-alt-v" class="handle" />
-                <input
+              <li class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                  <fa icon="arrows-alt-v" class="handle" />
+                  <input
+                    type="text"
+                    class="form-control mx-2"
+                    v-model="element.name"
+                    @click="$event.target.select()"
+                  />
+                  <button
+                    @click="this.$parent.deleteItem(editItem.items, element)"
+                    type="button"
+                    class="btn btn-sm text-dark position-absolute end-0"
+                  >
+                    &#x2715;
+                  </button>
+                </div>
+                <textarea
                   type="text"
-                  class="form-control mx-2"
-                  v-model="element.name"
+                  class="form-control mt-1"
+                  placeholder="Plaintext or html content"
+                  v-model="element.content"
                   @click="$event.target.select()"
                 />
-                <button
-                  @click="this.$parent.deleteItem(editItem.items, element)"
-                  type="button"
-                  class="btn btn-sm text-dark position-absolute end-0"
-                >
-                  &#x2715;
-                </button>
               </li>
             </template>
 
             <template #footer>
               <div class="btn-group" role="group">
-                <button class="btn" @click="this.$parent.addNewTabItem">
+                <button
+                  class="btn"
+                  @click="this.$parent.addNewChildItem(`${editItem.type}Item`)"
+                >
                   <fa icon="plus" class="text-success" />
                 </button>
               </div>
@@ -456,6 +464,7 @@ export default {
           this.editParent &&
           this.editParent.type !== "column" &&
           this.editItem.type !== "column") ||
+        this.editItem.type === "accordion" ||
         this.editItem.type === "alert"
       ) {
         return false;
@@ -465,7 +474,7 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style>
 .offcanvas {
   position: absolute;
 }

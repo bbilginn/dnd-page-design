@@ -176,11 +176,30 @@ export default {
           type: "tab",
           name: "Tab",
           columnSize: 0,
-          container: true,
           tabType: "nav-tabs",
           isJustified: false,
           items: [
-            { type: "tabItem", name: "Item-1", container: true, items: [] },
+            {
+              id: uuidv4(),
+              type: "tabItem",
+              name: "Item #1",
+              container: true,
+              items: [],
+            },
+          ],
+        },
+        {
+          type: "accordion",
+          name: "Accordion",
+          items: [
+            {
+              id: uuidv4(),
+              type: "accordionItem",
+              name: "Item #1",
+              content: "",
+              container: true,
+              items: [],
+            },
           ],
         },
         {

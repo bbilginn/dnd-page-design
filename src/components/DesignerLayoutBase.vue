@@ -4,7 +4,7 @@
       <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
           <button
-            class="nav-link"
+            class="nav-link active"
             id="nav-designer-items-tab"
             data-bs-toggle="tab"
             data-bs-target="#nav-designer-items"
@@ -16,7 +16,7 @@
             Design Items
           </button>
           <button
-            class="nav-link active"
+            class="nav-link"
             id="nav-custom-fields-tab"
             data-bs-toggle="tab"
             data-bs-target="#nav-custom-fields"
@@ -31,7 +31,7 @@
       </nav>
       <div class="tab-content" id="nav-tabContent">
         <div
-          class="tab-pane fade"
+          class="tab-pane fade show active"
           id="nav-designer-items"
           role="tabpanel"
           aria-labelledby="nav-designer-items-tab"
@@ -57,7 +57,7 @@
           </draggable>
         </div>
         <div
-          class="tab-pane fade show active"
+          class="tab-pane fade"
           id="nav-custom-fields"
           role="tabpanel"
           aria-labelledby="nav-custom-fields-tab"
@@ -182,6 +182,14 @@ export default {
           items: [
             { type: "tabItem", name: "Item-1", container: true, items: [] },
           ],
+        },
+        {
+          type: "alert",
+          name: "Alert",
+          title: "",
+          message: "A simple primary alert—check it out!",
+          icon: "",
+          color: "primary",
         },
       ],
       customFieldItems: [

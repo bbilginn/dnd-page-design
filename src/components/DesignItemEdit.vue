@@ -7,7 +7,8 @@
       :data-bs-target="`#offcanvas-${editItem.id}`"
       :aria-controls="`offcanvas-${editItem.id}`"
     >
-      <fa icon="edit" :class="textColor" />
+      <fa icon="edit" v-if="editItem.type === 'panel'" :class="{ textColor }" />
+      <fa icon="edit" v-else />
     </div>
 
     <div
@@ -29,7 +30,10 @@
         ></button>
       </div>
       <div class="offcanvas-body">
-        <div class="mb-3" v-if="editItem.type === 'panel'">
+        <div
+          class="mb-3"
+          v-if="editItem.type === 'panel' || editItem.type === 'alert'"
+        >
           <label :for="`title-input-${editItem.id}`" class="form-label"
             >Title</label
           >
@@ -39,6 +43,39 @@
             :id="`title-input-${editItem.id}`"
             placeholder="Title"
             v-model="editItem.title"
+            @click="$event.target.select()"
+          />
+        </div>
+        <div class="mb-3" v-if="editItem.type === 'alert'">
+          <label :for="`icon-input-${editItem.id}`" class="form-label"
+            >Icon</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            :id="`icon-input-${editItem.id}`"
+            placeholder="info-circle"
+            v-model="editItem.icon"
+            @click="$event.target.select()"
+          />
+          <div :id="`icon-${editItem.id}`" class="form-text">
+            Please copy-paste an icon value from <a
+              href="https://fontawesome.com/v5.15/icons?d=gallery&p=1&m=free"
+              target="_blank"
+              >fontawesome</a
+            >.            
+          </div>
+        </div>
+        <div class="mb-3" v-if="editItem.type === 'alert'">
+          <label :for="`message-input-${editItem.id}`" class="form-label"
+            >Message</label
+          >
+          <textarea
+            type="text"
+            class="form-control"
+            :id="`message-input-${editItem.id}`"
+            placeholder="Your message"
+            v-model="editItem.message"
             @click="$event.target.select()"
           />
         </div>
@@ -66,13 +103,11 @@
           </div>
         </div>
         <div class="mb-3" v-if="editItem.color !== undefined">
-          <label :for="`header-color-${editItem.id}`" class="form-label"
-            >Header Color</label
-          >
+          <label :for="`color-${editItem.id}`" class="form-label">Color</label>
           <br />
 
           <div
-            :id="`header-color-${editItem.id}`"
+            :id="`color-${editItem.id}`"
             class="btn-group-vertical col-12 gap-2"
             :aria-describedby="`container-help-${editItem.id}`"
           >
@@ -84,7 +119,7 @@
               <input
                 type="radio"
                 class="btn-check"
-                :name="`header-color-${editItem.id}`"
+                :name="`color-${editItem.id}`"
                 :id="`${colorClass}-outlined-${editItem.id}`"
                 autocomplete="off"
                 :value="colorClass"
@@ -95,11 +130,11 @@
                 :class="`btn btn-outline-${colorClass}`"
                 :style="colorClass === 'light' ? 'border: 1px solid black' : ''"
                 :for="`${colorClass}-outlined-${editItem.id}`"
-                >bg-{{ colorClass }}</label
+                >{{ colorClass }}</label
               >
             </div>
           </div>
-          <div :id="`header-color-${editItem.id}`" class="form-text">
+          <div :id="`color-${editItem.id}`" class="form-text">
             Set your color of the item.
             <br />
             <a
@@ -417,10 +452,11 @@ export default {
     },
     showColumnRanger() {
       if (
-        this.editItem.columnSize !== undefined &&
-        this.editParent &&
-        this.editParent.type !== "column" &&
-        this.editItem.type !== "column"
+        (this.editItem.columnSize !== undefined &&
+          this.editParent &&
+          this.editParent.type !== "column" &&
+          this.editItem.type !== "column") ||
+        this.editItem.type === "alert"
       ) {
         return false;
       }

@@ -62,7 +62,7 @@
     >
       <div class="d-flex justify-content-between align-items-center">
         <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
-        <span :class="textColor">{{ element.name }}</span>
+        <span>{{ element.name }}</span>
         <span
           class="fw-lighter"
           style="font-size: 10px"
@@ -81,6 +81,53 @@
     </div>
   </div>
 
+  <div v-else-if="element.type === 'alert'">
+    <div class="border rounded">
+      <div
+        class="
+          d-flex
+          justify-content-between
+          align-items-center
+          handle
+          pt-1
+          ps-3
+        "
+      >
+        <div class="d-flex justify-content-between align-items-center">
+          <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
+          <span>
+            {{ element.name }}
+          </span>
+        </div>
+        <div class="btn-group btn-group-sm" role="group">
+          <button
+            @click="deleteItem(editItems, element)"
+            type="button"
+            class="btn btn-sm text-dark"
+          >
+            &#x2715;
+          </button>
+        </div>
+      </div>
+      <div class="px-2">
+        <div class="alert" :class="`alert-${element.color}`" role="alert">
+          <h4 v-if="element.title !== ''" class="alert-heading">
+            {{ element.title }}
+          </h4>
+          <div class="d-flex align-items-center">
+            <fa
+              v-if="element.icon !== ''"
+              :icon="element.icon"
+              size="lg"
+              class="me-1"
+            />
+            <div>{{ element.message }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div v-else-if="element.type === 'tab'">
     <div class="border rounded">
       <div
@@ -95,7 +142,7 @@
       >
         <div class="d-flex justify-content-between align-items-center">
           <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
-          <span :class="textColor">
+          <span>
             {{ element.name }}
             <span
               class="fw-lighter"
@@ -195,7 +242,7 @@
     >
       <div class="d-flex justify-content-between align-items-center">
         <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
-        <span :class="textColor">
+        <span>
           {{ element.name }}
           <span
             class="fw-lighter me-1"
@@ -335,6 +382,10 @@ export default {
 
 .pointer {
   cursor: pointer;
+}
+
+.alert {
+  margin-bottom: 0.5rem !important;
 }
 
 .customField {

@@ -140,7 +140,6 @@ export default {
           name: "Container",
           container: true,
           items: [],
-          hasTableGenerator: true,
           className: "container-fluid",
         },
         {
@@ -149,7 +148,6 @@ export default {
           container: true,
           row: true,
           items: [],
-          hasTableGenerator: true,
         },
         {
           type: "column",
@@ -159,7 +157,6 @@ export default {
           className: "col", // with or without size, eg: col-6, col-sm-12, etc.
           container: true,
           items: [],
-          hasTableGenerator: true,
         },
         {
           type: "panel",
@@ -169,7 +166,6 @@ export default {
           columnSize: 0,
           container: true,
           items: [],
-          hasTableGenerator: true,
           isCollapsed: false,
         },
         {
@@ -191,6 +187,7 @@ export default {
         {
           type: "accordion",
           name: "Accordion",
+          columnSize: 0,
           items: [
             {
               id: uuidv4(),
@@ -209,6 +206,7 @@ export default {
           message: "A simple primary alert—check it out!",
           icon: "",
           color: "primary",
+          columnSize: 0,
         },
       ],
       customFieldItems: [
@@ -263,7 +261,6 @@ export default {
           container: true,
           items: [],
           id: uuidv4(),
-          hasTableGenerator: true,
           className: "container-fluid",
         },
       ],
@@ -338,8 +335,8 @@ html {
 }
 
 .row > [class*="col"] {
-  /* padding-top: 0.3rem;
-  padding-bottom: 0.3rem; */
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
   background-color: rgba(166, 166, 166, 0.05);
   border: 1px solid rgba(66, 66, 66, 0.04);
 }
@@ -353,7 +350,6 @@ html {
 }
 
 .inUsedArea {
-  border: 2px dashed #d5d5d5;
   padding: 0.1rem;
   height: 100vh;
 }

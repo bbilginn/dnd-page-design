@@ -91,7 +91,6 @@ export default {
           id: uuidv4(),
           container: true,
           row: true,
-          hasTableGenerator: true,
           items: x.cell.map(() => {
             return {
               id: uuidv4(),
@@ -102,7 +101,6 @@ export default {
               className: "col", // with or without size, eg: col-6, col-sm-12, etc.
               container: true,
               items: [],
-              hasTableGenerator: true,
             };
           }),
         };

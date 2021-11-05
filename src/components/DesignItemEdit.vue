@@ -432,7 +432,10 @@ export default {
 
           if (
             (editedItem.type === "tab" ||
+              editedItem.type === "alert" ||
               editedItem.type === "panel" ||
+              editedItem.type === "border" ||
+              editedItem.type === "accordion" ||
               editedItem.type === "customField") &&
             this.editParent &&
             this.editParent.type === "column"
@@ -459,22 +462,16 @@ export default {
       return panelTextColor.get(this.editItem);
     },
     showColumnRanger() {
-      if (
-        (this.editItem.columnSize !== undefined &&
-          this.editParent &&
-          this.editParent.type !== "column" &&
-          this.editItem.type !== "column") ||
-        this.editItem.type === "accordion" ||
-        this.editItem.type === "alert"
-      ) {
-        return false;
-      }
-      return true;
+      return (
+        this.editItem.columnSize !== undefined &&
+        this.editParent &&
+        this.editParent.type === "column"
+      );
     },
   },
 };
 </script>
-<style>
+<style scoped>
 .offcanvas {
   position: absolute;
 }

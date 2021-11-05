@@ -254,6 +254,13 @@
           <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
           <span>
             {{ element.name }}
+            <span
+              class="fw-lighter"
+              style="font-size: 10px"
+              v-if="element.columnSize !== undefined && element.columnSize > 1"
+            >
+              12/{{ element.columnSize }}
+            </span>
           </span>
         </div>
         <div class="btn-group btn-group-sm" role="group">
@@ -457,10 +464,10 @@ export default {
     },
     showRowAndColGesture() {
       return (
-        this.element.hasTableGenerator !== undefined &&
-        (this.element.columnSize === 0 ||
-          this.element.columnSize > 2 ||
-          this.element.type === "container")
+        this.element.columnSize === 0 ||
+        this.element.columnSize > 2 ||
+        this.element.type === "container" ||
+        this.element.type === "row"
       );
     },
   },

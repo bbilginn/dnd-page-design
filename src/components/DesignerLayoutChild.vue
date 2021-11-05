@@ -78,7 +78,7 @@ export default {
   min-height: 50px;
 }
 
-.row-border {
-  /* border-bottom: 2px dashed #d5d5d5; */
-}
+/* .row-border {
+  border-bottom: 2px dashed #d5d5d5;
+} */
 </style>

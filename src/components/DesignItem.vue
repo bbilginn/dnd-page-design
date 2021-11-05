@@ -128,6 +128,46 @@
     </div>
   </div>
 
+  <div v-else-if="element.type === 'border'">
+    <div class="border rounded">
+      <div
+        class="
+          d-flex
+          justify-content-between
+          align-items-center
+          handle
+          pt-1
+          ps-3
+        "
+      >
+        <div class="d-flex justify-content-between align-items-center">
+          <DesignItemEdit :parent="parent" :item="element" v-if="noEdit" />
+          <span>
+            {{ element.name }}
+          </span>
+        </div>
+        <div class="btn-group btn-group-sm" role="group">
+          <DesignRowAndColGesture :item="element" v-if="showRowAndColGesture" />
+          <button
+            @click="deleteItem(editItems, element)"
+            type="button"
+            class="btn btn-sm text-dark"
+          >
+            &#x2715;
+          </button>
+        </div>
+      </div>
+
+      <div class="border p-3 mx-2 mb-2" :class="[`border-${element.color}`, element.borderClass]">
+        <DesignerLayoutChild
+          :parent="element"
+          :customFieldItems="customFieldItems"
+          :items="element.items"
+        />
+      </div>
+    </div>
+  </div>
+
   <div v-else-if="element.type === 'tab'">
     <div class="border rounded">
       <div

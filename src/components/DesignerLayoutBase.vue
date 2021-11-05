@@ -208,6 +208,16 @@ export default {
           color: "primary",
           columnSize: 0,
         },
+        {
+          type: "border",
+          name: "Border",
+          columnSize: 0,
+          color: "",
+          borderClass: "",
+          container: true,
+          items: [],
+          isCollapsed: false,
+        },
       ],
       customFieldItems: [
         {

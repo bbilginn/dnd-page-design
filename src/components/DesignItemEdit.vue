@@ -46,6 +46,28 @@
             @click="$event.target.select()"
           />
         </div>
+        <div class="mb-3" v-if="editItem.type === 'border'">
+          <label :for="`title-input-${editItem.id}`" class="form-label"
+            >Class</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            :id="`title-input-${editItem.id}`"
+            placeholder="rounded border-5"
+            v-model="editItem.borderClass"
+            @click="$event.target.select()"
+          />
+          <div :id="`border-help-${editItem.id}`" class="form-text">
+            Set the class of the border. For example: rounded border-5
+            <br />
+            <a
+              href="https://getbootstrap.com/docs/5.1/utilities/borders/"
+              target="_blank"
+              >See the document</a
+            >
+          </div>
+        </div>
         <div class="mb-3" v-if="editItem.type === 'alert'">
           <label :for="`icon-input-${editItem.id}`" class="form-label"
             >Icon</label

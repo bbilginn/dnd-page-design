@@ -117,68 +117,73 @@
         </div>
       </div>
       <div class="p-2">
-        <nav>
-          <div
-            class="nav"
-            :class="[
-              element.tabType,
-              { 'nav-justified': element.isJustified },
-              { 'border-0': element?.items?.length === 0 },
-            ]"
-            :id="element.id"
-            role="tablist"
-          >
-            <button
-              v-for="(item, index) in element.items"
-              :key="item.id"
-              class="nav-link"
-              :class="{ ' active': index === 0 }"
-              :id="`nav-${index}-tab`"
-              data-bs-toggle="tab"
-              :data-bs-target="`#nav-${item.id}`"
-              :aria-controls="item.id"
-              type="button"
-              role="tab"
-              aria-selected="true"
-            >
-              {{ item.name }}
-            </button>
-            <button class="nav-link" @click="addNewTabItem">
-              <fa icon="plus" class="text-success" />
-            </button>
-          </div>
-        </nav>
-        <div class="tab-content bg-white" :id="`nav-tabContent-${element.id}`">
-          <div
-            v-for="(item, index) in element.items"
-            :key="item.id"
-            class="tab-pane fade"
-            :class="{ 'show active': index === 0 }"
-            :id="`nav-${item.id}`"
-            role="tabpanel"
-            :aria-labelledby="`nav-${item.id}-tab`"
-          >
+        <div class="card">
+          <div class="card-header">
             <div
-              class="border rounded-bottom p-3"
-              :class="{ 'border-top-0': element.tabType === 'nav-tabs' }"
+              class="nav card-header-tabs"
+              :class="[
+                element.tabType,
+                { 'nav-justified': element.isJustified },
+                { 'pb-2': element.tabType === 'nav-pills' },
+                { 'border-0': element?.items?.length === 0 },
+              ]"
+              :id="element.id"
+              role="tablist"
             >
-              <div class="d-flex justify-content-end align-items-center">
-                <div class="btn-group btn-group-sm" role="group">
-                  <DesignRowAndColGesture :item="item" />
-                  <button
-                    @click="deleteItem(element.items, item)"
-                    type="button"
-                    class="btn btn-sm text-dark"
-                  >
-                    &#x2715;
-                  </button>
-                </div>
+              <button
+                v-for="(item, index) in element.items"
+                :key="item.id"
+                class="nav-link"
+                :class="{ ' active': index === 0 }"
+                :id="`nav-${index}-tab`"
+                data-bs-toggle="tab"
+                :data-bs-target="`#nav-${item.id}`"
+                :aria-controls="item.id"
+                type="button"
+                role="tab"
+                aria-selected="true"
+              >
+                {{ item.name }}
+              </button>
+              <div class="ps-1 pe-2">
+                <button class="btn" @click="addNewTabItem">
+                  <fa icon="plus" class="text-success" />
+                </button>
               </div>
-              <DesignerLayoutChild
-                :parent="item"
-                :customFieldItems="customFieldItems"
-                :items="item.items"
-              />
+            </div>
+          </div>
+          <div class="card-body">
+            <div
+              class="tab-content"
+              :id="`nav-tabContent-${element.id}`"
+            >
+              <div
+                v-for="(item, index) in element.items"
+                :key="item.id"
+                class="tab-pane fade"
+                :class="{ 'show active': index === 0 }"
+                :id="`nav-${item.id}`"
+                role="tabpanel"
+                :aria-labelledby="`nav-${item.id}-tab`"
+              >
+                <div class="d-flex justify-content-end align-items-center">
+                  <div class="btn-group btn-group-sm" role="group">
+                    <DesignRowAndColGesture :item="item" />
+                    <button
+                      @click="deleteItem(element.items, item)"
+                      type="button"
+                      class="btn btn-sm text-dark"
+                    >
+                      &#x2715;
+                    </button>
+                  </div>
+                </div>
+                <DesignerLayoutChild
+                  :parent="item"
+                  :customFieldItems="customFieldItems"
+                  :items="item.items"
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -253,6 +253,7 @@
                 role="tabpanel"
                 :aria-labelledby="`nav-${item.id}-tab`"
               >
+                <div v-html="item.content"></div>
                 <div class="d-flex justify-content-end align-items-center">
                   <div class="btn-group btn-group-sm" role="group">
                     <DesignRowAndColGesture :item="item" />

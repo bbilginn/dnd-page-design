@@ -85,6 +85,32 @@ export default {
     },
     maker: function () {
       let items = this.selecteds.map((x) => {
+        let row = this.editItem.items[x.rowIndex - 1];
+        if (row !== undefined) {
+          let col = row.items[x.cell.length - 1];
+          if (col === undefined) {
+            let newColsLen = x.cell.length - row.items.length;
+            for (let i = 0; i < newColsLen; i++) {
+              row.items.push({
+                id: uuidv4(),
+                type: "column",
+                name: "Column",
+                columnSize: 0,
+                classType: "col", // just type, eg: col, col-xl, col-md, etc.
+                className: "col", // with or without size, eg: col-6, col-sm-12, etc.
+                container: true,
+                items: [],
+              });
+            }
+            return row;
+          } else {
+            if (row.items.length - x.cell.length > 0) {
+              row.items.splice(x.cell.length, row.items.length - x.cell.length);
+            }
+            return row;
+          }
+        }
+
         return {
           type: "row",
           name: "Row",
@@ -105,7 +131,6 @@ export default {
           }),
         };
       });
-      // console.log(items);
       this.editItem.items = items;
     },
     range: function (start, end) {

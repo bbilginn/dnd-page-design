@@ -450,7 +450,7 @@ export default {
     this.childItemIndex = this.editItem?.items?.length ?? 0;
   },
   methods: {
-    deleteItem: function (items, deleted) {
+    deleteItem: function (items, deleted, autoConfirmed = false) {
       let recoveredcustomFieldItems = [];
       function recoverAllChildcustomFieldItems(el) {
         if (el && el.items?.length > 0) {
@@ -469,14 +469,14 @@ export default {
       } has ${elementLength} child item${
         elementLength > 1 ? "s" : ""
       }. Are you sure?`;
-      if (elementLength === 0 || window.confirm(message)) {
-        if (deleted.type === "customField") {
+      if (elementLength === 0 || autoConfirmed || window.confirm(message)) {
+        if (deleted?.type === "customField") {
           this.editcustomFieldItems?.push(deleted);
         }
         recoverAllChildcustomFieldItems(deleted);
         this.editcustomFieldItems?.push(...recoveredcustomFieldItems);
-        let index = items.indexOf(deleted);
-        items.splice(index, 1);
+        let index = items?.indexOf(deleted);
+        items?.splice(index, 1);
       }
     },
     addNewChildItem: function (type) {

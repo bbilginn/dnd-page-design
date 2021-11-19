@@ -84,12 +84,20 @@ export default {
       this.selecteds = selecteds;
     },
     maker: function () {
+      if (this.editItem.items.length > this.selecteds.length) {
+        let deletedRows = [...this.editItem.items.slice(this.selecteds.length)];
+        deletedRows.forEach((x) => {
+          this.$parent.deleteItem(this.editItem.items, x, true);
+        });
+      }
+
       let items = this.selecteds.map((x) => {
+        let selectedColIndex = x.cell.length;
         let row = this.editItem.items[x.rowIndex - 1];
         if (row !== undefined) {
-          let col = row.items[x.cell.length - 1];
+          let col = row.items[selectedColIndex - 1];
           if (col === undefined) {
-            let newColsLen = x.cell.length - row.items.length;
+            let newColsLen = selectedColIndex - row.items.length;
             for (let i = 0; i < newColsLen; i++) {
               row.items.push({
                 id: uuidv4(),
@@ -104,8 +112,16 @@ export default {
             }
             return row;
           } else {
-            if (row.items.length - x.cell.length > 0) {
-              row.items.splice(x.cell.length, row.items.length - x.cell.length);
+            if (row.items.length - selectedColIndex > 0) {
+              let selectedLastIndex = row.items.length - selectedColIndex;
+              let restOfCols = selectedColIndex + selectedLastIndex;
+              let deletedCols = [];
+              for (let i = selectedColIndex; i < restOfCols; i++) {
+                deletedCols.push(row.items[i]);
+              }
+              deletedCols.forEach((x) => {
+                this.$parent.deleteItem(row.items, x, true);
+              });
             }
             return row;
           }

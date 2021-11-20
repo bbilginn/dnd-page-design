@@ -389,7 +389,7 @@
 </template> 
 
 <script>
-import panelTextColor from "./PanelTextColorPicker";
+import panelTextColor from "./helpers/PanelTextColorPicker";
 import draggable from "vuedraggable";
 
 export default {

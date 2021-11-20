@@ -37,17 +37,18 @@
           aria-labelledby="nav-designer-items-tab"
         >
           <draggable
+            class="design-items btn-group-vertical col-12 gap-2"
             :list="designItems"
             item-key="id"
             ghost-class="ghost"
             v-bind="{
-              group: { name: 'designItems', pull: 'clone', put: false },
+              group: { name: 'element-group', pull: 'clone', put: false },
               sort: false,
               disabled: false,
               animation: 300,
             }"
             :clone="onClone"
-            class="btn-group-vertical col-12 gap-2"
+            :move="onMove"
           >
             <template #item="{ element }">
               <button type="button" class="btn btn-outline-secondary">
@@ -68,17 +69,17 @@
             v-model="searchText"
           />
           <draggable
+            class="custom-field-items min-vh-100"
             :list="filteredcustomFieldItems"
             item-key="id"
             ghost-class="ghost"
             v-bind="{
-              group: { name: 'designItems', pull: true, put: true },
+              group: 'element-group',
               sort: true,
               disabled: false,
               animation: 300,
             }"
-            :clone="onClone"
-            class="min-vh-100"
+            :move="onMove"
           >
             <template #item="{ element }">
               <button type="button" class="m-1 btn btn-outline-secondary">
@@ -92,19 +93,19 @@
     <main>
       <draggable
         :list="designedItems"
-        class="inUsedArea"
+        class="designed-items"
         item-key="id"
-        @add="onAdd"
         handle=".handle"
-        delay="0"
         chosenClass="chosen"
         ghost-class="ghost"
         v-bind="{
-          group: 'designItems',
+          group: 'element-group',
           disabled: false,
           animation: 300,
+          swapThreshold: 0.6,
+          filter: '.locked-element',
         }"
-        :move="checkMove"
+        :move="onMove"
       >
         <template #item="{ element, index }">
           <DesignItem
@@ -124,6 +125,7 @@
 import draggable from "vuedraggable";
 import DesignItem from "./DesignItem.vue";
 import { v4 as uuidv4 } from "uuid";
+import onMove from "./helpers/OnMove";
 
 export default {
   name: "DesignerLayoutBase",
@@ -280,18 +282,12 @@ export default {
     this.filteredcustomFieldItems = this.customFieldItems;
   },
   watch: {
-    designedItems: {
-      handler(includedItems) {
-        let index = includedItems.indexOf(
-          includedItems.find((x) => x.type !== "container")
-        );
-        if (index >= 0) {
-          includedItems.splice(index, 1);
-          alert("Just container is accepted by root.");
-        }
-      },
-      deep: true,
-    },
+    // designedItems: {
+    //   handler(includedItems) {
+    //     console.log(includedItems);
+    //   },
+    //   deep: true,
+    // },
     searchText: {
       handler(text) {
         this.filteredcustomFieldItems = this.customFieldItems;
@@ -328,12 +324,8 @@ export default {
 
       return clonedElement;
     },
-    onAdd: function () {
-      // console.log(el.target.className);
-    },
-    checkMove(e) {
-      console.log(e);
-      return e.to.className !== "inUsedArea";
+    onMove: function (element) {
+      return onMove.check(element);
     },
   },
 };
@@ -359,7 +351,7 @@ html {
   min-height: 25%;
 }
 
-.inUsedArea {
+.designed-items {
   padding: 0.1rem;
   height: 100vh;
 }

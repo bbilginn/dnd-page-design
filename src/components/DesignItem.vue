@@ -425,7 +425,7 @@
 import DesignerLayoutChild from "./DesignerLayoutChild.vue";
 import DesignItemEdit from "./DesignItemEdit.vue";
 import DesignRowAndColGesture from "./DesignRowAndColGesture.vue";
-import panelTextColor from "./PanelTextColorPicker";
+import panelTextColor from "./helpers/PanelTextColorPicker";
 import { v4 as uuidv4 } from "uuid";
 
 export default {
@@ -527,11 +527,11 @@ export default {
 .alert {
   margin-bottom: 0.5rem !important;
 }
-
-.customField {
-  /* border: 1px solid red;
-  height: 100%;
+/* 
+.custom-field {
+  border: 1px solid red;
+  height: 100%!important;
   vertical-align: bottom;
-  align-content: center; */
-}
+  align-content: center;
+} */
 </style>

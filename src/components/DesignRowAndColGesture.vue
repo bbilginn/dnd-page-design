@@ -41,7 +41,7 @@
 
 <script>
 import { v4 as uuidv4 } from "uuid";
-import panelTextColor from "./PanelTextColorPicker";
+import panelTextColor from "./helpers/PanelTextColorPicker";
 
 export default {
   props: ["item"],

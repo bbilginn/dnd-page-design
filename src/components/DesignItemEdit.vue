@@ -7,8 +7,7 @@
       :data-bs-target="`#offcanvas-${editItem.id}`"
       :aria-controls="`offcanvas-${editItem.id}`"
     >
-      <fa icon="edit" v-if="editItem.type === 'panel'" :class="{ textColor }" />
-      <fa icon="edit" v-else />
+      <fa icon="edit" :class="textColor" />
     </div>
 
     <div
